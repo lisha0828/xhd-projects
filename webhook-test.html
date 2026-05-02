@@ -42,7 +42,8 @@ async function send() {
   try {
     const res = await fetch('https://xhd.feishu.cn/base/automation/webhook/event/WoxeaQvd4wvmzqh9WDgcxWexn7d', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(payload)
     });
     result.className = 'result success';
