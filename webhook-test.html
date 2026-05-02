@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Webhook 测试发送</title>
+<style>
+body { font-family: sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #f5f5f5; }
+.card { background: white; border-radius: 12px; padding: 32px; max-width: 400px; width: 90%; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
+h2 { margin-bottom: 8px; color: #333; }
+p { color: #888; font-size: 14px; margin-bottom: 24px; }
+button { background: #1677ff; color: white; border: none; border-radius: 8px; padding: 14px 32px; font-size: 15px; cursor: pointer; width: 100%; }
+button:disabled { background: #ccc; cursor: not-allowed; }
+.result { margin-top: 16px; padding: 12px; border-radius: 8px; font-size: 14px; }
+.success { background: #f0fff4; color: #22863a; border: 1px solid #c3e6cb; }
+.error { background: #fff5f5; color: #c0392b; border: 1px solid #f5c6cb; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h2>📡 Webhook 样本发送</h2>
+  <p>点击按钮向飞书发送一条测试数据<br>发送后立即回飞书点「生成」</p>
+  <button id="btn" onclick="send()">发送测试样本</button>
+  <div id="result"></div>
+</div>
+
+<script>
+async function send() {
+  const btn = document.getElementById('btn');
+  const result = document.getElementById('result');
+  btn.disabled = true;
+  btn.textContent = '发送中...';
+
+  const payload = {
+    姓名: '测试姓名',
+    电话: '13800000000',
+    孩子年级: '高一',
+    人格类型: '🧭 战略总舵手',
+    提交时间: new Date().toLocaleString('zh-CN'),
+    跟进状态: '未联系'
+  };
+
+  try {
+    const res = await fetch('https://xhd.feishu.cn/base/automation/webhook/event/WoxeaQvd4wvmzqh9WDgcxWexn7d', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    result.className = 'result success';
+    result.textContent = '✅ 发送成功！请立即回飞书点「生成」按钮';
+  } catch(e) {
+    result.className = 'result error';
+    result.textContent = '❌ 发送失败：' + e.message;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '重新发送';
+}
+</script>
+</body>
+</html>
