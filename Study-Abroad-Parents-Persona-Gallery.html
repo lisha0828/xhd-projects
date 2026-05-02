@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>留学家长人格图鉴</title>
+<title>留学家长人格图鉴 · Grace升学规划</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
 
 <style>
@@ -725,7 +725,7 @@ body::before {
 ══════════════════════════════════════ -->
 <section class="screen active" id="intro">
   <div style="margin-bottom: 40px;">
-    <p class="intro-ornament">新航道成都 · 国际课程研究院</p>
+    <p class="intro-ornament">Grace · 国际升学规划师</p>
     <h1 class="intro-title">你是哪种<br><em>留学家长</em>？</h1>
     <p class="intro-subtitle">8道场景题，揭示你在孩子教育上的真实决策风格——比你想象的更准。</p>
     
@@ -1051,9 +1051,9 @@ body::before {
   </div>
 
   <div class="result-cta">
-    <div class="cta-name">龚</div>
-    <p class="cta-title">龚丽莎 · 国际课程顾问</p>
-    <p class="cta-sub">新航道成都学校 · 专注IB / A-Level / AP课程规划<br>根据你的测试结果，帮你找到最合适的路径</p>
+    <div class="cta-name" style="background:transparent;border:none;overflow:hidden;"><img src="https://raw.githubusercontent.com/lisha0828/xhd-projects/main/shark.jpg" style="width:56px;height:56px;object-fit:cover;border-radius:50%;"></div>
+    <p class="cta-title">Grace · 国际升学规划师</p>
+    <p class="cta-sub">专注IB / A-Level / AP课程规划<br>根据你的测试结果，帮你找到最适合孩子的路径</p>
     <button class="btn-wechat" onclick="copyWechat()">
       <span>📱</span>
       <span>复制微信号联系我</span>
@@ -1219,12 +1219,12 @@ function calculateResult() {
     scores[dim] += val;
   }
 
-  // Budget: max 4, high if >= 2
-  // Control: max 6, high if >= 3
-  // Worldview: max 6, high if >= 3
-  const B = scores.b >= 2 ? 'H' : 'L';
-  const C = scores.c >= 3 ? 'H' : 'L';
-  const W = scores.w >= 3 ? 'H' : 'L';
+  // Budget: max 4, high if >= 3
+  // Control: max 6, high if >= 4
+  // Worldview: max 6, high if >= 4
+  const B = scores.b >= 3 ? 'H' : 'L';
+  const C = scores.c >= 4 ? 'H' : 'L';
+  const W = scores.w >= 4 ? 'H' : 'L';
   resultKey = B + C + W;
 
   const p = PERSONALITIES[resultKey];
