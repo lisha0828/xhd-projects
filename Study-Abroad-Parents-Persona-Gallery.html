@@ -1267,7 +1267,7 @@ function submitForm() {
     电话: phone,
     孩子年级: grade || '未填写',
     人格类型: p.emoji + ' ' + p.name,
-    提交时间: Date.now(),
+    提交时间: Math.floor(Date.now() / 1000),
     跟进状态: '未联系'
   };
 
