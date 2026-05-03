@@ -35,8 +35,13 @@ async function send() {
     电话: '13800000000',
     孩子年级: '高一',
     人格类型: '🧭 战略总舵手',
-    提交时间: new Date().toLocaleString('zh-CN'),
-    跟进状态: '未联系'
+    提交时间: (()=>{ const d = new Date(new Date().toLocaleString('en-US', {timeZone:'Asia/Shanghai'})); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); })(),
+    跟进状态: '未联系',
+    回国意愿: '希望他回来，但如果国外机会真的更好，也可以谈',
+    国际形势态度: '形势一直在变，关键是孩子自身的竞争力，这才是可控的',
+    出国驱动力: '我们家长做了充分研究，这是经过深思熟虑的主动选择',
+    预算态度: '值得——好的规划是最重要的前期投资，这钱该花',
+    孩子主导权: '综合了就业前景、政策稳定性和费用，最终是我来拍板的'
   };
 
   try {
