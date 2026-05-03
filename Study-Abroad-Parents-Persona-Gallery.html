@@ -781,7 +781,7 @@ body::before {
         </div>
         <div class="option" onclick="selectOption(this, 1, 'q1', 2)">
           <div class="option-letter">C</div>
-          <div class="option-text">选B班，好老师是最值得的投入，这笔钱不该省</div>
+          <div class="option-text">选B班，好老师才是最值得的投入，效果比价格更重要</div>
         </div>
       </div>
     </div>
@@ -960,7 +960,7 @@ body::before {
       <p class="q-text">孩子的课程需要临时加课，费用超出原计划20%</p>
       <p class="q-context">你会怎么做？</p>
       <div class="options">
-        <div class="option" onclick="selectOption(this, 10, 'q10', 1)">
+        <div class="option" onclick="selectOption(this, 10, 'q10', 2)">
           <div class="option-letter">A</div>
           <div class="option-text">先了解为什么要加，值得的话我考虑</div>
         </div>
@@ -968,9 +968,9 @@ body::before {
           <div class="option-letter">B</div>
           <div class="option-text">先看能不能用其他方式解决，不想随意增加开支</div>
         </div>
-        <div class="option" onclick="selectOption(this, 10, 'q10', 2)">
+        <div class="option" onclick="selectOption(this, 10, 'q10', 1)">
           <div class="option-letter">C</div>
-          <div class="option-text">加，孩子需要就加，这点钱不是问题</div>
+          <div class="option-text">加，孩子有需要就加，课程效果更重要</div>
         </div>
       </div>
     </div>
@@ -1103,7 +1103,8 @@ body::before {
 
   </div><!-- /quiz-body -->
 
-  <div class="quiz-footer">
+  <div class="quiz-footer" style="justify-content:space-between;">
+    <button class="btn-next" id="btn-prev" onclick="prevQuestion()" style="opacity:0;pointer-events:none;">← 上一题</button>
     <button class="btn-next" id="btn-next" onclick="nextQuestion()">下一题 →</button>
   </div>
 </section>
@@ -1360,10 +1361,13 @@ function startQuiz() {
   updateProgress();
 }
 
+const answerTexts = {}; // store answer text for key questions
+
 function selectOption(el, qNum, qId, value) {
   el.closest('.options').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
   el.classList.add('selected');
   answers[qId] = value;
+  answerTexts[qId] = el.querySelector('.option-text').textContent.trim();
 
   const btn = document.getElementById('btn-next');
   btn.classList.add('visible');
@@ -1389,20 +1393,16 @@ function nextQuestion() {
   currentQ++;
   document.getElementById('q' + currentQ).classList.add('active');
 
-  const btn = document.getElementById('btn-next');
-  btn.classList.remove('visible');
-
   updateProgress();
+  updateButtons();
   window.scrollTo(0, 0);
 }
 
 function showMidpoint() {
-  // Hide Q8
   document.getElementById('q8').classList.remove('active');
   const btn = document.getElementById('btn-next');
   btn.classList.remove('visible');
 
-  // Calculate partial control score for midpoint label
   let cScore = 0;
   for (let i = 1; i <= 8; i++) {
     if (Q_DIM[i] === 'c') cScore += (answers['q'+i] || 0);
@@ -1415,10 +1415,54 @@ function showMidpoint() {
 function continueQuiz() {
   currentQ = 9;
   document.getElementById('q9').classList.add('active');
-  const btn = document.getElementById('btn-next');
-  btn.classList.remove('visible');
   showScreen('quiz');
   updateProgress();
+  updateButtons();
+}
+
+function prevQuestion() {
+  if (currentQ <= 1) return;
+
+  document.getElementById('q' + currentQ).classList.remove('active');
+  currentQ--;
+  document.getElementById('q' + currentQ).classList.add('active');
+
+  // Restore selected state visually
+  const qId = 'q' + currentQ;
+  if (answers[qId] !== undefined) {
+    const options = document.querySelectorAll(`#${qId} .option`);
+    options.forEach(o => {
+      const val = parseInt(o.getAttribute('onclick').match(/,\s*(\d+)\)/)[1]);
+      if (val === answers[qId]) o.classList.add('selected');
+    });
+  }
+
+  updateProgress();
+  updateButtons();
+  window.scrollTo(0, 0);
+}
+
+function updateButtons() {
+  const prevBtn = document.getElementById('btn-prev');
+  const nextBtn = document.getElementById('btn-next');
+
+  // Show/hide prev button
+  if (currentQ > 1) {
+    prevBtn.style.opacity = '1';
+    prevBtn.style.pointerEvents = 'all';
+  } else {
+    prevBtn.style.opacity = '0';
+    prevBtn.style.pointerEvents = 'none';
+  }
+
+  // Show next button only if current question is answered
+  const qId = 'q' + currentQ;
+  if (answers[qId] !== undefined) {
+    nextBtn.classList.add('visible');
+    nextBtn.textContent = currentQ === totalQ ? '查看结果 →' : '下一题 →';
+  } else {
+    nextBtn.classList.remove('visible');
+  }
 }
 
 function updateProgress() {
@@ -1437,12 +1481,12 @@ function calculateResult() {
     scores[dim] += val;
   }
 
-  // Budget: 4 questions max 8, high if >= 5
-  // Control: 6 questions max 12, high if >= 7
-  // Worldview: 6 questions max 12, high if >= 7
-  const B = scores.b >= 5 ? 'H' : 'L';
-  const C = scores.c >= 7 ? 'H' : 'L';
-  const W = scores.w >= 7 ? 'H' : 'L';
+  // Budget: 4 questions max 8, high if >= 4
+  // Control: 6 questions max 12, high if >= 6
+  // Worldview: 6 questions max 12, high if >= 6
+  const B = scores.b >= 4 ? 'H' : 'L';
+  const C = scores.c >= 6 ? 'H' : 'L';
+  const W = scores.w >= 6 ? 'H' : 'L';
   resultKey = B + C + W;
 
   const p = PERSONALITIES[resultKey];
@@ -1479,11 +1523,6 @@ function submitForm() {
   const p = PERSONALITIES[resultKey];
   const now = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
 
-  const getAnswerText = (qId) => {
-    const q = document.querySelector(`#${qId} .option.selected .option-text`);
-    return q ? q.textContent.trim() : '未作答';
-  };
-
   const payload = {
     姓名: name,
     电话: phone,
@@ -1491,11 +1530,11 @@ function submitForm() {
     人格类型: p.emoji + ' ' + p.name,
     提交时间: (()=>{ const d = new Date(new Date().toLocaleString('en-US', {timeZone:'Asia/Shanghai'})); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); })(),
     跟进状态: '未联系',
-    回国意愿: getAnswerText('q14'),
-    国际形势态度: getAnswerText('q6'),
-    出国驱动力: getAnswerText('q16'),
-    预算态度: getAnswerText('q4'),
-    孩子主导权: getAnswerText('q5')
+    回国意愿: answerTexts['q14'] || '未作答',
+    国际形势态度: answerTexts['q6'] || '未作答',
+    出国驱动力: answerTexts['q16'] || '未作答',
+    预算态度: answerTexts['q4'] || '未作答',
+    孩子主导权: answerTexts['q5'] || '未作答'
   };
 
   fetch(FEISHU_WEBHOOK, {
