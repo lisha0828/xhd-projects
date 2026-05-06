@@ -719,10 +719,9 @@ body::before {
 
 /* ─── BACK BUTTON ─── */
 .back-home {
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  z-index: 999;
+  position: absolute;
+  top: 20px;
+  left: 20px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -744,14 +743,11 @@ body::before {
 </head>
 <body>
 
-<a class="back-home" href="https://grace-planner.github.io/xhd-projects/grace-home.html">
-  ← 返回主页
-</a>
-
 <!-- ══════════════════════════════════════
      SCREEN 1: INTRO
 ══════════════════════════════════════ -->
 <section class="screen active" id="intro">
+  <a class="back-home" href="https://grace-planner.github.io/xhd-projects/grace-home.html">← 返回主页</a>
   <div style="margin-bottom: 40px;">
     <p class="intro-ornament">Grace · 国际升学规划师</p>
     <h1 class="intro-title">你是哪种<br><em>留学家长</em>？</h1>
@@ -1160,6 +1156,7 @@ body::before {
      SCREEN 6: RESULT
 ══════════════════════════════════════ -->
 <section class="screen" id="result">
+  <a class="back-home" href="https://grace-planner.github.io/xhd-projects/grace-home.html">← 返回主页</a>
   <div class="result-hero">
     <p class="result-label">你的留学家长人格</p>
     <span class="result-emoji" id="result-emoji">🧭</span>
