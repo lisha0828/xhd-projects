@@ -827,7 +827,7 @@ function resetFilter() {
   document.querySelectorAll('#s-filter .ow-btn, #s-filter .ib').forEach(b=>{
     b.classList.remove('sel'); b.style.background='';
   });
-  showToast('已重置');
+  toast('已重置');
 }
 
 async function doCustomFilter() {
@@ -857,23 +857,20 @@ async function doCustomFilter() {
     if(to)   conditions.push({ field_name: field, operator:'<=', value:[new Date(to+'T23:59:59').getTime()] });
   });
 
-  if(!conditions.length){ showToast('请至少选择一个筛选条件'); return; }
+  // 无条件时查全部（不传 filter）
+  const fetchAll = !conditions.length;
 
   // 构建：多选同字段 or，跨字段 and
-  // 简化：直接把所有条件传给云函数，云函数用 and 连接
-  // 对于意向/客群多选，在云函数侧用 or 处理
   const multiFields = Object.keys(filterMulti).filter(k=>filterMulti[k].size>0);
   const singleConds = conditions.filter(c=>!multiFields.includes(c.field_name));
   
   let finalConditions = [...singleConds];
   let conjunction = 'and';
 
-  // 如果只有一种多选字段且无单选，直接or
   if(multiFields.length === 1 && singleConds.length === 0){
     finalConditions = conditions;
     conjunction = 'or';
   } else if(multiFields.length > 0){
-    // 多选字段各自内部or，整体再and —— 交给云函数分批查询再合并
     finalConditions = conditions;
     conjunction = 'and';
   }
@@ -885,7 +882,9 @@ async function doCustomFilter() {
   showScreen('s-list');
 
   try {
-    const data = await proxyCall('custom', { filters: finalConditions, conjunction });
+    const data = fetchAll
+      ? await proxyCall('all')
+      : await proxyCall('custom', { filters: finalConditions, conjunction });
     if(data.code!==0&&data.code!==undefined){
       document.getElementById('l-sub').textContent='查询出错';
       document.getElementById('list-content').innerHTML=`<div class="empty-state"><div class="ei">⚠️</div>错误：${esc(data.msg||'')}</div>`;
