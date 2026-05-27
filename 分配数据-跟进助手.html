@@ -10,94 +10,180 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --navy:#0F1E35;--green:#00B96B;--green2:#00A35E;
-  --bg:#EEF1F6;--card:#fff;--text:#111827;--muted:#6B7280;--border:#E5E8EE;--radius:14px;
-  --iA:#00B96B;--iB:#1677FF;--iC:#FA8C16;--iD:#722ED1;--iE:#8C8C8C;--iF:#FF4D4F;--iG:#CF1322;
+  --ink:#0D1B2E;--ink2:#1A2E47;
+  --green:#00C173;--green-dk:#00A562;
+  --bg:#F0F4F8;--card:#FFFFFF;
+  --text:#0F172A;--sub:#64748B;--hint:#CBD5E1;
+  --border:#E8EDF3;--radius:16px;
+  --shadow:0 1px 2px rgba(13,27,46,.04),0 4px 16px rgba(13,27,46,.06);
+  --iA:#059669;--iB:#2563EB;--iC:#D97706;--iD:#7C3AED;
+  --iE:#64748B;--iF:#DC2626;--iG:#991B1B;
 }
-html,body{height:100%;background:var(--bg);font-family:-apple-system,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;color:var(--text)}
+html,body{height:100%;background:var(--bg);font-family:-apple-system,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
 .screen{display:none;min-height:100vh}.screen.active{display:block}
 
-/* ── 顶部栏 ── */
-.hd{background:var(--navy);color:#fff;padding:calc(env(safe-area-inset-top)+14px) 18px 16px;position:sticky;top:0;z-index:50}
-.hd-back{background:none;border:none;color:rgba(255,255,255,.65);font-size:15px;padding:0 0 8px;cursor:pointer;font-family:inherit;display:block}
-.hd-title{font-size:19px;font-weight:700;letter-spacing:-.3px}
-.hd-sub{font-size:13px;color:rgba(255,255,255,.5);margin-top:3px}
+/* ════ 顶部栏 ════ */
+.hd{
+  background:var(--ink);
+  color:#fff;
+  padding:calc(env(safe-area-inset-top)+16px) 20px 18px;
+  position:sticky;top:0;z-index:50;
+}
+.hd-back{
+  background:none;border:none;
+  color:rgba(255,255,255,.5);font-size:13px;
+  padding:0 0 10px;cursor:pointer;font-family:inherit;
+  display:inline-flex;align-items:center;gap:5px;letter-spacing:.2px
+}
+.hd-back:active{color:rgba(255,255,255,.8)}
+.hd-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.hd-title{font-size:20px;font-weight:700;letter-spacing:-.5px;line-height:1.2}
+.hd-phone{font-size:13px;color:rgba(255,255,255,.45);font-weight:400}
 
-/* ── 首页搜索栏 ── */
-.sr{display:flex;gap:8px;margin-top:12px}
-.si{flex:1;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.18);border-radius:11px;padding:11px 14px;color:#fff;font-size:16px;outline:none;font-family:inherit}
-.si::placeholder{color:rgba(255,255,255,.35)}.si:focus{border-color:rgba(255,255,255,.4)}
-.sb{background:var(--green);border:none;border-radius:11px;padding:0 18px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
-.sb:active{background:var(--green2)}
+/* ════ 搜索栏 ════ */
+.sr{display:flex;gap:9px;margin-top:14px}
+.si{
+  flex:1;background:rgba(255,255,255,.1);
+  border:1.5px solid rgba(255,255,255,.14);border-radius:12px;
+  padding:11px 15px;color:#fff;font-size:15px;outline:none;font-family:inherit;
+  transition:border-color .15s
+}
+.si::placeholder{color:rgba(255,255,255,.3)}.si:focus{border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.14)}
+.sb{
+  background:var(--green);border:none;border-radius:12px;
+  padding:0 20px;color:#fff;font-size:14px;font-weight:600;
+  cursor:pointer;font-family:inherit;letter-spacing:.2px
+}
+.sb:active{background:var(--green-dk)}
 
-/* ── 内容区 ── */
-.ct{padding:18px 14px calc(env(safe-area-inset-bottom)+18px)}
-.ctd{padding:14px 14px calc(env(safe-area-inset-bottom)+82px)}
+/* ════ 内容区 ════ */
+.ct{padding:18px 16px calc(env(safe-area-inset-bottom)+20px)}
+.ctd{padding:14px 16px calc(env(safe-area-inset-bottom)+86px)}
 
-/* ── 首页按钮网格 ── */
-.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+/* ════ 首页分类按钮 ════ */
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .cat-btn{
   background:var(--card);border:none;border-radius:var(--radius);
-  padding:20px 16px;text-align:left;cursor:pointer;
-  display:flex;flex-direction:column;gap:6px;
-  box-shadow:0 1px 4px rgba(0,0,0,.06);
-  transition:transform .1s
+  padding:18px 16px 16px;text-align:left;cursor:pointer;
+  display:flex;flex-direction:column;gap:0;
+  box-shadow:var(--shadow);transition:transform .12s,box-shadow .12s;
+  overflow:hidden;position:relative
 }
-.cat-btn:active{transform:scale(.97);background:#f5f7fa}
-.cat-icon{font-size:28px;line-height:1}
-.cat-label{font-size:15px;font-weight:700;color:var(--text)}
-.cat-desc{font-size:12px;color:var(--muted);line-height:1.4}
-/* 每个按钮的左侧色条 */
-.cat-btn.c-orange{border-left:4px solid #FF6B2B}
-.cat-btn.c-blue  {border-left:4px solid #1677FF}
-.cat-btn.c-green {border-left:4px solid #00B96B}
-.cat-btn.c-purple{border-left:4px solid #722ED1}
+.cat-btn:active{transform:scale(.96);box-shadow:none}
+.cat-stripe{
+  position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0
+}
+.cat-icon{font-size:26px;margin-bottom:10px;line-height:1}
+.cat-label{font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px}
+.cat-desc{font-size:11px;color:var(--sub);line-height:1.5}
 
-/* ── 列表页结果 ── */
-.ri{background:var(--card);border-radius:var(--radius);padding:13px 15px;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
-.ri:active{background:#f5f7fa}
-.rn{font-size:16px;font-weight:600;margin-bottom:3px}.rp{font-size:13px;color:var(--muted)}
-.ri-meta{font-size:12px;color:var(--muted);margin-top:2px}
-.rb{min-width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;margin-left:10px}
+/* ════ 列表项 ════ */
+.ri{
+  background:var(--card);border-radius:var(--radius);
+  padding:14px 16px;margin-bottom:10px;
+  display:flex;align-items:center;gap:12px;cursor:pointer;
+  box-shadow:var(--shadow);transition:transform .1s
+}
+.ri:active{transform:scale(.98);background:#FAFBFD}
+.ri-left{flex:1;min-width:0}
+.rn{font-size:16px;font-weight:600;margin-bottom:3px;color:var(--text)}
+.rp{font-size:13px;color:var(--sub)}
+.ri-meta{font-size:11px;color:var(--hint);margin-top:3px}
+.rb{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:#fff
+}
 
-/* ── 详情页卡片 ── */
-.card{background:var(--card);border-radius:var(--radius);margin-bottom:11px;overflow:hidden}
-.cl{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.6px;padding:13px 15px 0;text-transform:uppercase}
-.ig{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;padding:10px 12px 14px}
-.ib{height:44px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;font-family:inherit}
-.ib:active{opacity:.8}.ifw{grid-column:1/-1}
-.ib.sel{color:#fff;border-color:transparent}
+/* ════ 详情卡片 ════ */
+.card{background:var(--card);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow)}
+.cl{
+  font-size:10px;font-weight:700;color:var(--sub);letter-spacing:.8px;
+  padding:14px 16px 0;text-transform:uppercase
+}
+
+/* 意向按钮 */
+.ig{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px 13px 14px}
+.ib{
+  height:46px;border-radius:12px;border:1.5px solid var(--border);
+  background:#FAFBFD;font-size:14px;font-weight:700;color:var(--sub);
+  cursor:pointer;font-family:inherit;transition:all .12s
+}
+.ib:active{opacity:.75}
+.ib.sel{color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(0,0,0,.15)}
 .ib[data-v="A"].sel{background:var(--iA)}.ib[data-v="B"].sel{background:var(--iB)}
 .ib[data-v="C"].sel{background:var(--iC)}.ib[data-v="D"].sel{background:var(--iD)}
 .ib[data-v="E"].sel{background:var(--iE)}.ib[data-v="F"].sel{background:var(--iF)}
-.ib[data-v="G"].sel{background:var(--iG)}.ib[data-v="已报名"].sel{background:var(--navy)}
-.yn-row{display:flex;gap:8px;margin-top:6px}
-.yn-btn{flex:1;height:40px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit}
-.yn-btn.sel-yes{background:#E6F7F0;border-color:var(--green);color:var(--green)}
-.yn-btn.sel-no {background:#FFF1F0;border-color:#FF4D4F;color:#FF4D4F}
-.ow-btn{height:38px;padding:0 14px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit}
-.ow-btn:active{opacity:.8}
-.ow-btn.sel{background:#EEF3FF;border-color:#1677FF;color:#1677FF}
-.fr{padding:11px 15px;border-top:1px solid var(--border)}.fr:first-of-type{border-top:none}
-.fl{font-size:12px;color:var(--muted);margin-bottom:5px}
-.fi{width:100%;border:none;outline:none;font-size:15px;font-family:inherit;color:var(--text);background:transparent;resize:none}
-.fita{min-height:72px;line-height:1.55}
-.firo{font-size:14px;color:#444;line-height:1.55}.firo.empty{color:#bbb}
+.ib[data-v="G"].sel{background:var(--iG)}.ib[data-v="已报名"].sel{background:var(--ink)}
+
+/* 是/否 & 自有按钮 */
+.yn-row{display:flex;gap:8px;margin-top:8px}
+.yn-btn{
+  flex:1;height:42px;border-radius:12px;
+  border:1.5px solid var(--border);background:#FAFBFD;
+  font-size:14px;font-weight:600;color:var(--sub);cursor:pointer;font-family:inherit
+}
+.yn-btn.sel-yes{background:#ECFDF5;border-color:#059669;color:#059669}
+.yn-btn.sel-no{background:#FEF2F2;border-color:#DC2626;color:#DC2626}
+.ow-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.ow-btn{
+  height:38px;padding:0 16px;border-radius:20px;
+  border:1.5px solid var(--border);background:#FAFBFD;
+  font-size:13px;font-weight:600;color:var(--sub);cursor:pointer;font-family:inherit;
+  transition:all .12s
+}
+.ow-btn:active{opacity:.75}
+.ow-btn.sel{background:#EFF6FF;border-color:#2563EB;color:#2563EB}
+
+/* 表单行 */
+.fr{padding:13px 16px;border-top:1px solid var(--border)}.fr:first-of-type{border-top:none}
+.fl{font-size:11px;font-weight:600;color:var(--sub);margin-bottom:6px;letter-spacing:.3px}
+.fi{
+  width:100%;border:none;outline:none;
+  font-size:15px;font-family:inherit;color:var(--text);background:transparent;resize:none;
+  line-height:1.5
+}
+.fita{min-height:76px}
+.firo{font-size:14px;color:#334155;line-height:1.6}.firo.empty{color:var(--hint)}
 input[type=date].fi{color:var(--text)}
 
-/* ── 保存栏 ── */
-.savebar{position:fixed;bottom:0;left:0;right:0;padding:10px 14px;padding-bottom:calc(env(safe-area-inset-bottom)+10px);background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-top:1px solid var(--border);z-index:100}
-.savebtn{width:100%;background:var(--green);color:#fff;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer}
-.savebtn:active{background:var(--green2)}.savebtn:disabled{background:#bbb;cursor:not-allowed}
+/* 意向说明 */
+.legend{
+  background:var(--card);border-radius:var(--radius);
+  padding:14px 16px;margin-bottom:12px;
+  box-shadow:var(--shadow)
+}
+.legend-row{display:flex;flex-wrap:wrap;gap:6px 16px}
+.legend-item{font-size:12px;color:var(--sub);display:flex;align-items:center;gap:5px}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 
-/* ── 杂项 ── */
-.empty-state{text-align:center;padding:50px 20px;color:var(--muted);font-size:14px}
-.ei{font-size:40px;margin-bottom:10px}
-.loading{text-align:center;padding:50px 20px;color:var(--muted);font-size:14px}
-.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(15,30,53,.88);color:#fff;padding:9px 20px;border-radius:24px;font-size:14px;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;z-index:999}
+/* ════ 保存栏 ════ */
+.savebar{
+  position:fixed;bottom:0;left:0;right:0;
+  padding:12px 16px;padding-bottom:calc(env(safe-area-inset-bottom)+12px);
+  background:rgba(240,244,248,.92);backdrop-filter:blur(16px);
+  border-top:1px solid var(--border);z-index:100
+}
+.savebtn{
+  width:100%;background:var(--ink);color:#fff;border:none;
+  border-radius:14px;padding:15px;font-size:16px;font-weight:600;
+  font-family:inherit;cursor:pointer;letter-spacing:.2px;
+  box-shadow:0 4px 16px rgba(13,27,46,.25)
+}
+.savebtn:active{background:var(--ink2)}.savebtn:disabled{background:var(--hint);box-shadow:none;cursor:not-allowed}
+
+/* ════ 杂项 ════ */
+.empty-state{text-align:center;padding:60px 20px;color:var(--sub);font-size:14px}
+.ei{font-size:44px;margin-bottom:12px}
+.loading{text-align:center;padding:60px 20px;color:var(--hint);font-size:14px}
+.toast{
+  position:fixed;bottom:110px;left:50%;
+  transform:translateX(-50%) translateY(12px);
+  background:rgba(13,27,46,.9);color:#fff;
+  padding:10px 22px;border-radius:24px;font-size:14px;
+  opacity:0;transition:all .2s;pointer-events:none;white-space:nowrap;z-index:999
+}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.legend{background:var(--card);border-radius:var(--radius);padding:12px 15px;margin-bottom:11px;font-size:12px;color:var(--muted);line-height:1.9}
-.legend strong{font-weight:600;color:var(--text)}
 </style>
 </head>
 <body>
@@ -105,7 +191,7 @@ input[type=date].fi{color:var(--text)}
 <!-- ═══ 首页 ═══ -->
 <div id="s-home" class="screen active">
   <div class="hd">
-    <div class="hd-title">分配数据跟进</div>
+    <div class="hd-row"><div class="hd-title">分配数据跟进</div></div>
     <div class="sr">
       <input id="q" class="si" type="search" placeholder="搜索姓名或手机号…" autocomplete="off">
       <button class="sb" onclick="doSearch()">搜索</button>
@@ -113,25 +199,29 @@ input[type=date].fi{color:var(--text)}
   </div>
   <div class="ct">
     <div class="btn-grid">
-      <button class="cat-btn c-orange" onclick="loadList('today')">
+      <button class="cat-btn" onclick="loadList('today')">
+        <div class="cat-stripe" style="background:#F97316"></div>
         <div class="cat-icon">📞</div>
         <div class="cat-label">今日待联系</div>
-        <div class="cat-desc">下次跟进日期<br>= 今天</div>
+        <div class="cat-desc">下次跟进 = 今天</div>
       </button>
-      <button class="cat-btn c-blue" onclick="loadList('week')">
+      <button class="cat-btn" onclick="loadList('week')">
+        <div class="cat-stripe" style="background:#3B82F6"></div>
         <div class="cat-icon">📅</div>
         <div class="cat-label">本周待联系</div>
-        <div class="cat-desc">下次跟进日期<br>在本周内</div>
+        <div class="cat-desc">下次跟进在本周</div>
       </button>
-      <button class="cat-btn c-green" onclick="loadList('enrolled')">
+      <button class="cat-btn" onclick="loadList('enrolled')">
+        <div class="cat-stripe" style="background:#10B981"></div>
         <div class="cat-icon">✅</div>
         <div class="cat-label">已报名客户</div>
-        <div class="cat-desc">意向标记为<br>已报名</div>
+        <div class="cat-desc">意向 = 已报名</div>
       </button>
-      <button class="cat-btn c-purple" onclick="loadList('month')">
+      <button class="cat-btn" onclick="loadList('month')">
+        <div class="cat-stripe" style="background:#8B5CF6"></div>
         <div class="cat-icon">📋</div>
         <div class="cat-label">本月分配</div>
-        <div class="cat-desc">分配时间<br>在本月内</div>
+        <div class="cat-desc">分配时间在本月</div>
       </button>
     </div>
   </div>
@@ -141,32 +231,35 @@ input[type=date].fi{color:var(--text)}
 <div id="s-list" class="screen">
   <div class="hd">
     <button class="hd-back" onclick="goHome()">← 返回</button>
-    <div id="l-title" class="hd-title">—</div>
-    <div id="l-sub" class="hd-sub">加载中…</div>
+    <div class="hd-row">
+      <div id="l-title" class="hd-title">—</div>
+      <div id="l-sub" class="hd-phone">加载中…</div>
+    </div>
   </div>
-  <div class="ct" id="list-content">
-    <div class="loading">加载中…</div>
-  </div>
+  <div class="ct" id="list-content"><div class="loading">加载中…</div></div>
 </div>
 
 <!-- ═══ 详情页 ═══ -->
 <div id="s-detail" class="screen">
   <div class="hd">
     <button class="hd-back" onclick="goList()">← 返回列表</button>
-    <div id="d-name" class="hd-title">—</div>
-    <div id="d-phone" class="hd-sub">—</div>
+    <div class="hd-row">
+      <div id="d-name" class="hd-title">—</div>
+      <div id="d-phone" class="hd-phone">—</div>
+    </div>
   </div>
   <div class="ctd">
-    <!-- 基本信息（可编辑）-->
+
+    <!-- 基本信息 -->
     <div class="card">
-      <div style="display:flex;gap:0;border-bottom:none">
+      <div style="display:flex">
         <div class="fr" style="border-top:none;flex:1;border-right:1px solid var(--border)">
           <div class="fl">姓名</div>
           <input type="text" id="f-name" class="fi" placeholder="客户姓名…">
         </div>
-        <div class="fr" style="border-top:none;flex:1">
-          <div class="fl">号码/微信</div>
-          <input type="text" id="f-phone" class="fi" placeholder="手机号或微信号…">
+        <div class="fr" style="border-top:none;flex:1.4">
+          <div class="fl">号码 / 微信</div>
+          <input type="text" id="f-phone" class="fi" placeholder="手机号或微信…">
         </div>
       </div>
     </div>
@@ -186,20 +279,11 @@ input[type=date].fi{color:var(--text)}
       </div>
     </div>
 
-    <!-- 只读信息 -->
+    <!-- 客户信息只读 -->
     <div class="card">
       <div class="fr" style="border-top:none">
         <div class="fl">具体信息</div>
         <div id="f-info" class="firo empty">—</div>
-      </div>
-      <div class="fr">
-        <div class="fl">是否自有/曾哥/他人</div>
-        <div style="display:flex;gap:7px;margin-top:6px;flex-wrap:wrap">
-          <button class="ow-btn" data-v="是"   onclick="setOwner('是')">是</button>
-          <button class="ow-btn" data-v="否"   onclick="setOwner('否')">否</button>
-          <button class="ow-btn" data-v="曾哥" onclick="setOwner('曾哥')">曾哥</button>
-          <button class="ow-btn" data-v="他人" onclick="setOwner('他人')">他人</button>
-        </div>
       </div>
       <div class="fr">
         <div class="fl">分配时间</div>
@@ -207,14 +291,17 @@ input[type=date].fi{color:var(--text)}
       </div>
     </div>
 
+    <!-- 最新通话 -->
     <div class="card">
-      <div class="fr">
+      <div class="fr" style="border-top:none">
         <div class="fl">最新通话记录</div>
         <textarea id="f-call" class="fi fita" placeholder="记录本次通话内容…"></textarea>
       </div>
     </div>
+
+    <!-- 下次跟进 -->
     <div class="card">
-      <div class="fr">
+      <div class="fr" style="border-top:none">
         <div class="fl">下次跟进日期</div>
         <input type="date" id="f-date" class="fi">
       </div>
@@ -223,6 +310,8 @@ input[type=date].fi{color:var(--text)}
         <input type="text" id="f-purpose" class="fi" placeholder="如：推进意向、确认报名…">
       </div>
     </div>
+
+    <!-- 特殊提醒 -->
     <div class="card">
       <div class="fr" style="border-top:none">
         <div class="fl">特殊提醒时间</div>
@@ -233,6 +322,8 @@ input[type=date].fi{color:var(--text)}
         <input type="text" id="f-remind-note" class="fi" placeholder="需要特别注意的事项…">
       </div>
     </div>
+
+    <!-- 留学报备 & 是否自有 -->
     <div class="card">
       <div class="fr" style="border-top:none">
         <div class="fl">留学报备</div>
@@ -241,13 +332,30 @@ input[type=date].fi{color:var(--text)}
           <button class="yn-btn" id="yn-no"  onclick="setYN('否')">否</button>
         </div>
       </div>
+      <div class="fr">
+        <div class="fl">是否自有 / 曾哥 / 他人</div>
+        <div class="ow-row">
+          <button class="ow-btn" data-v="是"   onclick="setOwner('是')">自有</button>
+          <button class="ow-btn" data-v="否"   onclick="setOwner('否')">否</button>
+          <button class="ow-btn" data-v="曾哥" onclick="setOwner('曾哥')">曾哥</button>
+          <button class="ow-btn" data-v="他人" onclick="setOwner('他人')">他人</button>
+        </div>
+      </div>
     </div>
+
+    <!-- 意向说明 -->
     <div class="legend">
-      <strong>A</strong> 明确意向 &nbsp;·&nbsp; <strong>B</strong> 待确定 &nbsp;·&nbsp;
-      <strong>C</strong> 低价值 &nbsp;·&nbsp; <strong>D</strong> 长期 &nbsp;·&nbsp;
-      <strong>E</strong> 无意向 &nbsp;·&nbsp; <strong>F</strong> 无效 &nbsp;·&nbsp;
-      <strong>G</strong> 已流失
+      <div class="legend-row">
+        <div class="legend-item"><div class="legend-dot" style="background:#059669"></div>A 明确意向</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#2563EB"></div>B 待确定</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#D97706"></div>C 低价值</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#7C3AED"></div>D 长期</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#64748B"></div>E 无意向</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#DC2626"></div>F 无效</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#991B1B"></div>G 已流失</div>
+      </div>
     </div>
+
   </div>
   <div class="savebar">
     <button id="save-btn" class="savebtn" onclick="doSave()">保存更新</button>
@@ -261,146 +369,125 @@ const PROXY = 'https://feishu-le-proxy-wyyuhgxhep.cn-hangzhou.fcapp.run';
 
 async function proxyCall(action, params) {
   const resp = await fetch(PROXY, {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
+    method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({action, ...params}),
   });
   const outer = await resp.json();
   return typeof outer.body === 'string' ? JSON.parse(outer.body) : outer;
 }
 
-// ── 工具 ──
 function rv(v) {
-  if (v == null) return '';
-  if (typeof v === 'string') return v;
-  if (typeof v === 'number') return String(v);
-  if (Array.isArray(v)) return v.map(i => i.text || '').join('');
-  if (typeof v === 'object') return v.text || v.value || '';
+  if (v==null) return '';
+  if (typeof v==='string') return v;
+  if (typeof v==='number') return String(v);
+  if (Array.isArray(v)) return v.map(i=>i.text||'').join('');
+  if (typeof v==='object') return v.text||v.value||'';
   return String(v);
 }
 function msToDateInput(ms) {
   if (!ms) return '';
   const d = new Date(Number(ms));
   if (isNaN(d)) return '';
-  const bj = new Date(d.getTime() + 8*60*60*1000);
+  const bj = new Date(d.getTime()+8*3600000);
   return `${bj.getUTCFullYear()}-${String(bj.getUTCMonth()+1).padStart(2,'0')}-${String(bj.getUTCDate()).padStart(2,'0')}`;
 }
 function fmtDate(ms) {
   if (!ms) return '';
   const d = new Date(Number(ms));
-  return isNaN(d) ? '' : d.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Shanghai'});
+  return isNaN(d)?'':d.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Shanghai'});
 }
-function iColor(v) {
-  return ({A:'#00B96B',B:'#1677FF',C:'#FA8C16',D:'#722ED1',E:'#8C8C8C',F:'#FF4D4F',G:'#CF1322','已报名':'#0F1E35'})[v]||'#bbb';
+function iColor(v){
+  return ({A:'#059669',B:'#2563EB',C:'#D97706',D:'#7C3AED',E:'#64748B',F:'#DC2626',G:'#991B1B','已报名':'#0D1B2E'})[v]||'#94A3B8';
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function setRO(id,val){const e=document.getElementById(id);e.textContent=val||'—';e.className='firo'+(val?'':' empty')}
+function setRO(id,val){const e=document.getElementById(id);if(!e)return;e.textContent=val||'—';e.className='firo'+(val?'':' empty')}
 
-const CAT_NAMES = {
-  today:    '今日待联系',
-  week:     '本周待联系',
-  enrolled: '已报名客户',
-  month:    '本月分配',
-};
+const CAT_NAMES={today:'今日待联系',week:'本周待联系',enrolled:'已报名客户',month:'本月分配'};
+let listStore=[],curCat='';
 
-// ── 列表数据 ──
-let listStore = [], curCat = '';
-
-// ── 搜索（从首页触发，进入列表页显示结果）──
 async function doSearch() {
-  const q = document.getElementById('q').value.trim();
-  if (!q) return;
-  curCat = 'search';
-  document.getElementById('l-title').textContent = '搜索结果';
-  document.getElementById('l-sub').textContent = '「' + q + '」';
-  document.getElementById('list-content').innerHTML = '<div class="loading">搜索中…</div>';
+  const q=document.getElementById('q').value.trim();
+  if(!q)return;
+  curCat='search';
+  document.getElementById('l-title').textContent='搜索结果';
+  document.getElementById('l-sub').textContent='「'+q+'」';
+  document.getElementById('list-content').innerHTML='<div class="loading">搜索中…</div>';
   showScreen('s-list');
   try {
-    const data = await proxyCall('search', {q});
-    listStore = data.data?.items || [];
+    const data=await proxyCall('search',{q});
+    listStore=data.data?.items||[];
     renderList();
-  } catch(e) {
-    document.getElementById('list-content').innerHTML =
-      `<div class="empty-state"><div class="ei">⚠️</div>${esc(e.message)}</div>`;
+  } catch(e){
+    document.getElementById('list-content').innerHTML=`<div class="empty-state"><div class="ei">⚠️</div>${esc(e.message)}</div>`;
   }
 }
 
-// ── 分类列表（从首页按钮触发）──
 async function loadList(cat) {
-  curCat = cat;
-  document.getElementById('l-title').textContent = CAT_NAMES[cat] || cat;
-  document.getElementById('l-sub').textContent = '加载中…';
-  document.getElementById('list-content').innerHTML = '<div class="loading">加载中…</div>';
+  curCat=cat;
+  document.getElementById('l-title').textContent=CAT_NAMES[cat]||cat;
+  document.getElementById('l-sub').textContent='加载中…';
+  document.getElementById('list-content').innerHTML='<div class="loading">加载中…</div>';
   showScreen('s-list');
   try {
-    const data = await proxyCall(cat);
-    // 飞书 API 报错时显示详情（用于调试）
-    if (data.code !== 0 && data.code !== undefined) {
-      document.getElementById('l-sub').textContent = '查询出错';
-      document.getElementById('list-content').innerHTML =
-        `<div class="empty-state"><div class="ei">⚠️</div>飞书错误 ${data.code}：${data.msg || ''}<br><small style="word-break:break-all">${esc(JSON.stringify(data))}</small></div>`;
+    const data=await proxyCall(cat);
+    if(data.code!==0&&data.code!==undefined){
+      document.getElementById('l-sub').textContent='查询出错';
+      document.getElementById('list-content').innerHTML=
+        `<div class="empty-state"><div class="ei">⚠️</div>飞书错误 ${data.code}：${data.msg||''}<br><small style="word-break:break-all;font-size:11px">${esc(JSON.stringify(data))}</small></div>`;
       return;
     }
-    listStore = data.data?.items || [];
-    document.getElementById('l-sub').textContent = `共 ${listStore.length} 条`;
+    listStore=data.data?.items||[];
+    document.getElementById('l-sub').textContent=`共 ${listStore.length} 条`;
     renderList();
-  } catch(e) {
-    document.getElementById('l-sub').textContent = '加载失败';
-    document.getElementById('list-content').innerHTML =
-      `<div class="empty-state"><div class="ei">⚠️</div>${esc(e.message)}</div>`;
+  } catch(e){
+    document.getElementById('l-sub').textContent='加载失败';
+    document.getElementById('list-content').innerHTML=`<div class="empty-state"><div class="ei">⚠️</div>${esc(e.message)}</div>`;
   }
 }
 
 function renderList() {
-  const el = document.getElementById('list-content');
-  if (!listStore.length) {
-    el.innerHTML = '<div class="empty-state"><div class="ei">😌</div>暂无数据</div>';
-    return;
-  }
-  el.innerHTML = listStore.map((item, idx) => {
-    const f = item.fields;
-    const name   = rv(f['姓名']) || '（无姓名）';
-    const phone  = rv(f['号码/微信']) || '—';
-    const intent = rv(f['意向']) || '';
-    // 显示下次跟进日期或分配时间作为副标题
-    const dateMs  = f['下次跟进日期'] || f['分配时间'];
-    const dateTxt = dateMs ? fmtDate(dateMs) : '';
-    const badge   = intent
-      ? `<div class="rb" style="background:${iColor(intent)}">${esc(intent)}</div>`
-      : '<div style="width:30px"></div>';
+  const el=document.getElementById('list-content');
+  if(!listStore.length){el.innerHTML='<div class="empty-state"><div class="ei">😌</div>暂无数据</div>';return;}
+  el.innerHTML=listStore.map((item,idx)=>{
+    const f=item.fields;
+    const name=rv(f['姓名'])||'（无姓名）';
+    const phone=rv(f['号码/微信'])||'—';
+    const intent=rv(f['意向'])||'';
+    const dateMs=f['下次跟进日期']||f['分配时间'];
+    const dateTxt=dateMs?fmtDate(dateMs):'';
+    const badge=intent?`<div class="rb" style="background:${iColor(intent)}">${esc(intent)}</div>`:'';
     return `<div class="ri" onclick="openRecord(${idx})">
-      <div style="flex:1;min-width:0">
+      <div class="ri-left">
         <div class="rn">${esc(name)}</div>
         <div class="rp">${esc(phone)}</div>
-        ${dateTxt ? `<div class="ri-meta">${esc(dateTxt)}</div>` : ''}
+        ${dateTxt?`<div class="ri-meta">${esc(dateTxt)}</div>`:''}
       </div>
       ${badge}
     </div>`;
   }).join('');
 }
 
-// ── 打开详情 ──
-let cur = null, curIntent = '', curYN = '', curOwner = '';
+let cur=null,curIntent='',curYN='',curOwner='';
 
-function openRecord(idx) {
-  cur = listStore[idx];
-  const f = cur.fields;
-  const name  = rv(f['姓名']) || '';
-  const phone = rv(f['号码/微信']) || '';
-  document.getElementById('d-name').textContent  = name  || '（无姓名）';
-  document.getElementById('d-phone').textContent = phone || '—';
-  document.getElementById('f-name').value  = name;
-  document.getElementById('f-phone').value = phone;
-  curIntent = rv(f['意向']) || '';  renderIntent();
-  document.getElementById('f-call').value         = rv(f['最新通话记录']) || '';
-  document.getElementById('f-date').value         = msToDateInput(f['下次跟进日期']);
-  document.getElementById('f-purpose').value      = rv(f['下次跟进目的']) || '';
-  document.getElementById('f-remind-date').value  = msToDateInput(f['特殊提醒时间']);
-  document.getElementById('f-remind-note').value  = rv(f['特殊提醒事项']) || '';
-  curYN = rv(f['留学报备']) || '';  renderYN();
-  curOwner = rv(f['是否自有/曾哥/他人']) || '';  renderOwner();
-  setRO('f-info',  rv(f['具体信息']));
-  setRO('f-atime', fmtDate(f['分配时间']));
+function openRecord(idx){
+  cur=listStore[idx];
+  const f=cur.fields;
+  const name=rv(f['姓名'])||'';
+  const phone=rv(f['号码/微信'])||'';
+  document.getElementById('d-name').textContent=name||'（无姓名）';
+  document.getElementById('d-phone').textContent=phone||'—';
+  document.getElementById('f-name').value=name;
+  document.getElementById('f-phone').value=phone;
+  curIntent=rv(f['意向'])||''; renderIntent();
+  document.getElementById('f-call').value=rv(f['最新通话记录'])||'';
+  document.getElementById('f-date').value=msToDateInput(f['下次跟进日期']);
+  document.getElementById('f-purpose').value=rv(f['下次跟进目的'])||'';
+  document.getElementById('f-remind-date').value=msToDateInput(f['特殊提醒时间']);
+  document.getElementById('f-remind-note').value=rv(f['特殊提醒事项'])||'';
+  curYN=rv(f['留学报备'])||''; renderYN();
+  curOwner=rv(f['是否自有/曾哥/他人'])||''; renderOwner();
+  setRO('f-info',rv(f['具体信息']));
+  setRO('f-atime',fmtDate(f['分配时间']));
   showScreen('s-detail');
 }
 
@@ -414,48 +501,34 @@ function renderYN(){
 function setOwner(v){curOwner=(curOwner===v)?'':v;renderOwner();}
 function renderOwner(){document.querySelectorAll('.ow-btn').forEach(b=>b.classList.toggle('sel',b.dataset.v===curOwner));}
 
-// ── 保存 ──
-async function doSave() {
-  if (!cur) return;
-  const btn = document.getElementById('save-btn');
-  btn.disabled=true; btn.textContent='保存中…';
-  try {
-    const fields = {};
-    const name = document.getElementById('f-name').value.trim();
-    if (name) fields['姓名'] = name;
-    const phone = document.getElementById('f-phone').value.trim();
-    if (phone) fields['号码/微信'] = phone;
-    if (curIntent) fields['意向'] = curIntent;
-    const call = document.getElementById('f-call').value.trim();
-    if (call) fields['最新通话记录'] = call;
-    const dv = document.getElementById('f-date').value;
-    if (dv) fields['下次跟进日期'] = new Date(dv+'T15:59:00.000Z').getTime();
-    const pu = document.getElementById('f-purpose').value.trim();
-    if (pu) fields['下次跟进目的'] = pu;
-    const rd = document.getElementById('f-remind-date').value;
-    if (rd) fields['特殊提醒时间'] = new Date(rd+'T15:59:00.000Z').getTime();
-    const rn = document.getElementById('f-remind-note').value.trim();
-    if (rn) fields['特殊提醒事项'] = rn;
-    if (curYN) fields['留学报备'] = curYN;
-    if (curOwner) fields['是否自有/曾哥/他人'] = curOwner;
-    if (!Object.keys(fields).length){toast('没有需要保存的变更');btn.disabled=false;btn.textContent='保存更新';return;}
-    const data = await proxyCall('update', {recordId: cur.record_id, fields});
-    if (data.code===0){toast('✅ 已保存');Object.assign(cur.fields,fields);}
+async function doSave(){
+  if(!cur)return;
+  const btn=document.getElementById('save-btn');
+  btn.disabled=true;btn.textContent='保存中…';
+  try{
+    const fields={};
+    const name=document.getElementById('f-name').value.trim();if(name)fields['姓名']=name;
+    const phone=document.getElementById('f-phone').value.trim();if(phone)fields['号码/微信']=phone;
+    if(curIntent)fields['意向']=curIntent;
+    const call=document.getElementById('f-call').value.trim();if(call)fields['最新通话记录']=call;
+    const dv=document.getElementById('f-date').value;if(dv)fields['下次跟进日期']=new Date(dv+'T15:59:00.000Z').getTime();
+    const pu=document.getElementById('f-purpose').value.trim();if(pu)fields['下次跟进目的']=pu;
+    const rd=document.getElementById('f-remind-date').value;if(rd)fields['特殊提醒时间']=new Date(rd+'T15:59:00.000Z').getTime();
+    const rn=document.getElementById('f-remind-note').value.trim();if(rn)fields['特殊提醒事项']=rn;
+    if(curYN)fields['留学报备']=curYN;
+    if(curOwner)fields['是否自有/曾哥/他人']=curOwner;
+    if(!Object.keys(fields).length){toast('没有需要保存的变更');btn.disabled=false;btn.textContent='保存更新';return;}
+    const data=await proxyCall('update',{recordId:cur.record_id,fields});
+    if(data.code===0){toast('✅ 已保存');Object.assign(cur.fields,fields);}
     else toast('保存失败：'+(data.msg||JSON.stringify(data)));
-  } catch(e){toast('错误：'+e.message);}
-  btn.disabled=false; btn.textContent='保存更新';
+  }catch(e){toast('错误：'+e.message);}
+  btn.disabled=false;btn.textContent='保存更新';
 }
 
-// ── 导航 ──
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0,0);
-}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
 function goHome(){showScreen('s-home');}
 function goList(){showScreen('s-list');}
 
-// ── Toast ──
 let _tt;
 function toast(msg){const e=document.getElementById('toast');e.textContent=msg;e.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>e.classList.remove('show'),2800);}
 
