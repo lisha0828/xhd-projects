@@ -533,30 +533,24 @@ async function doSave(){
   btn.disabled=false;btn.textContent='保存更新';
 }
 
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function _showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function showScreen(id){
+  if(id!=='s-home') history.pushState({screen:id},'',location.href.split('#')[0]+'#'+id);
+  else history.replaceState({screen:'s-home'},'',location.href.split('#')[0]);
+  _showScreen(id);
+}
 function goHome(){showScreen('s-home');}
 function goList(){showScreen('s-list');}
 
-// 右滑返回手势
-(function(){
-  let startX=0, startY=0;
-  document.addEventListener('touchstart', e=>{
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-  }, {passive:true});
-  document.addEventListener('touchend', e=>{
-    const dx = e.changedTouches[0].clientX - startX;
-    const dy = Math.abs(e.changedTouches[0].clientY - startY);
-    // 右滑距离>60px，且横向位移大于纵向，且从屏幕左侧30px内开始
-    if(dx > 60 && dy < 80 && startX < 60){
-      const active = document.querySelector('.screen.active');
-      if(active){
-        if(active.id === 's-detail') goList();
-        else if(active.id === 's-list') goHome();
-      }
-    }
-  }, {passive:true});
-})();
+// 用 history.pushState 支持浏览器原生返回手势
+window.addEventListener('popstate', e=>{
+  const state = e.state?.screen;
+  if(state){
+    _showScreen(state);
+  } else {
+    _showScreen('s-home');
+  }
+});
 
 let _tt;
 function toast(msg){const e=document.getElementById('toast');e.textContent=msg;e.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>e.classList.remove('show'),2800);}
