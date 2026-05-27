@@ -371,6 +371,18 @@ input[type=date].fi{color:var(--text)}
       </div>
     </div>
 
+    <!-- 客群 -->
+    <div class="card">
+      <div class="cl">客群</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 13px 14px">
+        <button class="ow-btn" data-v="小学生" onclick="setGroup('小学生')">小学生</button>
+        <button class="ow-btn" data-v="初中生" onclick="setGroup('初中生')">初中生</button>
+        <button class="ow-btn" data-v="高中生" onclick="setGroup('高中生')">高中生</button>
+        <button class="ow-btn" data-v="大学生" onclick="setGroup('大学生')">大学生</button>
+        <button class="ow-btn" data-v="成人"   onclick="setGroup('成人')">成人</button>
+      </div>
+    </div>
+
     <!-- 客户信息只读 -->
     <div class="card">
       <div class="fr" style="border-top:none">
@@ -427,7 +439,7 @@ input[type=date].fi{color:var(--text)}
       <div class="fr">
         <div class="fl">是否自有 / 曾哥 / 他人</div>
         <div class="ow-row">
-          <button class="ow-btn" data-v="是"   onclick="setOwner('是')">自有</button>
+          <button class="ow-btn" data-v="是"   onclick="setOwner('是')">是</button>
           <button class="ow-btn" data-v="否"   onclick="setOwner('否')">否</button>
           <button class="ow-btn" data-v="曾哥" onclick="setOwner('曾哥')">曾哥</button>
           <button class="ow-btn" data-v="他人" onclick="setOwner('他人')">他人</button>
@@ -662,7 +674,7 @@ function renderList() {
   }).join('');
 }
 
-let cur=null,curIntent='',curYN='',curOwner='';
+let cur=null,curIntent='',curYN='',curOwner='',curGroup='';
 
 function openRecord(idx){
   cur=listStore[idx];
@@ -681,6 +693,7 @@ function openRecord(idx){
   document.getElementById('f-remind-note').value=rv(f['特殊提醒事项'])||'';
   curYN=rv(f['留学报备'])||''; renderYN();
   curOwner=rv(f['是否自有/曾哥/他人'])||''; renderOwner();
+  curGroup=rv(f['客群'])||''; renderGroup();
   setRO('f-info',rv(f['具体信息']));
   setRO('f-atime',fmtDate(f['分配时间']));
   showScreen('s-detail');
@@ -694,7 +707,9 @@ function renderYN(){
   document.getElementById('yn-no').className='yn-btn'+(curYN==='否'?' sel-no':'');
 }
 function setOwner(v){curOwner=(curOwner===v)?'':v;renderOwner();}
-function renderOwner(){document.querySelectorAll('.ow-btn').forEach(b=>b.classList.toggle('sel',b.dataset.v===curOwner));}
+function renderOwner(){document.querySelectorAll('.ow-btn[data-v]').forEach(b=>{if(b.onclick?.toString().includes('setOwner'))b.classList.toggle('sel',b.dataset.v===curOwner)});}
+function setGroup(v){curGroup=(curGroup===v)?'':v;renderGroup();}
+function renderGroup(){document.querySelectorAll('.ow-btn[data-v]').forEach(b=>{if(b.onclick?.toString().includes('setGroup'))b.classList.toggle('sel',b.dataset.v===curGroup);});}
 
 async function doSave(){
   if(!cur)return;
@@ -712,6 +727,7 @@ async function doSave(){
     const rn=document.getElementById('f-remind-note').value.trim();if(rn)fields['特殊提醒事项']=rn;
     if(curYN)fields['留学报备']=curYN;
     if(curOwner)fields['是否自有/曾哥/他人']=curOwner;
+    if(curGroup)fields['客群']=curGroup;
     if(!Object.keys(fields).length){toast('没有需要保存的变更');btn.disabled=false;btn.textContent='保存更新';return;}
     const data=await proxyCall('update',{recordId:cur.record_id,fields});
     if(data.code===0){toast('✅ 已保存');Object.assign(cur.fields,fields);}
