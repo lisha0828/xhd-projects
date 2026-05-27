@@ -18,8 +18,8 @@
   --text:#0F172A;--sub:#64748B;--hint:#CBD5E1;
   --border:#E8EDF3;--radius:16px;
   --shadow:0 1px 2px rgba(13,27,46,.04),0 4px 16px rgba(13,27,46,.06);
-  --iA:#059669;--iB:#2563EB;--iC:#D97706;--iD:#7C3AED;
-  --iE:#64748B;--iF:#DC2626;--iG:#991B1B;
+  --iA:#EF4444;--iB:#7C3AED;--iC:#38BDF8;--iD:#16A34A;
+  --iE:#94A3B8;--iF:#475569;--iG:#1E293B;
 }
 html,body{height:100%;background:var(--bg);font-family:-apple-system,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
 .screen{display:none;min-height:100vh}.screen.active{display:block}
@@ -139,16 +139,19 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'PingFang S
 .rp{font-size:13px;color:var(--sub)}
 .ri-meta{font-size:11px;color:var(--hint);margin-top:3px}
 .rb{
-  width:32px;height:32px;border-radius:50%;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  font-size:12px;font-weight:700;color:#fff
+  width:52px;height:22px;border-radius:11px;flex-shrink:0;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:#fff;
+  white-space:nowrap;overflow:hidden
 }
 .call-btn{
-  width:36px;height:36px;border-radius:50%;flex-shrink:0;
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
-  font-size:18px;background:#ECFDF5;text-decoration:none;
-  margin-right:6px;
+  background:rgba(0,193,115,.12);text-decoration:none;border:1.5px solid rgba(0,193,115,.25);
+  transition:background .15s
 }
+.call-btn:active{background:rgba(0,193,115,.25)}
+.ri-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
 
 /* ════ 详情卡片 ════ */
 .card{background:var(--card);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow)}
@@ -171,7 +174,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'PingFang S
 .ib[data-v="A"].sel{background:var(--iA)}.ib[data-v="B"].sel{background:var(--iB)}
 .ib[data-v="C"].sel{background:var(--iC)}.ib[data-v="D"].sel{background:var(--iD)}
 .ib[data-v="E"].sel{background:var(--iE)}.ib[data-v="F"].sel{background:var(--iF)}
-.ib[data-v="G"].sel{background:var(--iG)}.ib[data-v="已报名"].sel{background:var(--ink)}
+.ib[data-v="G"].sel{background:var(--iG)}.ib[data-v="已报名"].sel{background:#FEF9C3;color:#78350F;border-color:#FDE68A}
 
 /* 是/否 & 自有按钮 */
 .yn-row{display:flex;gap:8px;margin-top:8px}
@@ -193,7 +196,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'PingFang S
   transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .18s ease,background .12s,border-color .12s;
 }
 .ow-btn:active{transform:scale(.88);box-shadow:none;}
-.ow-btn.sel{background:#EFF6FF;border-color:#2563EB;color:#2563EB;transform:scale(1.06);box-shadow:0 3px 10px rgba(37,99,235,.2);}
+.ow-btn.sel{border-width:2.5px;box-shadow:0 2px 8px rgba(0,0,0,.15);transform:scale(1.06);}
 
 /* 表单行 */
 .fr{padding:13px 16px;border-top:1px solid var(--border)}.fr:first-of-type{border-top:none}
@@ -384,11 +387,11 @@ input[type=date].fi{color:var(--text)}
     <div class="card">
       <div class="cl">客群</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 13px 14px">
-        <button class="ow-btn" data-v="小学生" onclick="setGroup('小学生')">小学生</button>
-        <button class="ow-btn" data-v="初中生" onclick="setGroup('初中生')">初中生</button>
-        <button class="ow-btn" data-v="高中生" onclick="setGroup('高中生')">高中生</button>
-        <button class="ow-btn" data-v="大学生" onclick="setGroup('大学生')">大学生</button>
-        <button class="ow-btn" data-v="成人"   onclick="setGroup('成人')">成人</button>
+        <button class="ow-btn" data-v="小学生" onclick="setGroup('小学生')" style="background:#ECFCCB;color:#365314;border-color:#D9F99D">小学生</button>
+        <button class="ow-btn" data-v="初中生" onclick="setGroup('初中生')" style="background:#DCFCE7;color:#14532D;border-color:#BBF7D0">初中生</button>
+        <button class="ow-btn" data-v="高中生" onclick="setGroup('高中生')" style="background:#FEF9C3;color:#78350F;border-color:#FDE68A">高中生</button>
+        <button class="ow-btn" data-v="大学生" onclick="setGroup('大学生')" style="background:#DBEAFE;color:#1E3A8A;border-color:#BFDBFE">大学生</button>
+        <button class="ow-btn" data-v="成人"   onclick="setGroup('成人')"   style="background:#EDE9FE;color:#4C1D95;border-color:#DDD6FE">成人</button>
       </div>
     </div>
 
@@ -611,7 +614,7 @@ function fmtDate(ms) {
   return isNaN(d)?'':d.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Shanghai'});
 }
 function iColor(v){
-  return ({A:'#059669',B:'#2563EB',C:'#D97706',D:'#7C3AED',E:'#64748B',F:'#DC2626',G:'#991B1B','已报名':'#0D1B2E'})[v]||'#94A3B8';
+  return ({A:'#EF4444',B:'#7C3AED',C:'#38BDF8',D:'#16A34A',E:'#94A3B8',F:'#475569',G:'#1E293B','已报名':'#FEF9C3'})[v]||'#94A3B8';
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function setRO(id,val){const e=document.getElementById(id);if(!e)return;e.textContent=val||'—';e.className='firo'+(val?'':' empty')}
@@ -669,16 +672,20 @@ function renderList() {
     const intent=rv(f['意向'])||'';
     const dateMs=curCat==='month'?f['分配时间']:(f['下次跟进日期']||f['分配时间']);
     const dateTxt=dateMs?fmtDate(dateMs):'';
-    const badge=intent?`<div class="rb" style="background:${iColor(intent)}">${esc(intent)}</div>`:'';
+    const badgeStyle = intent==='已报名' ? 'background:#FEF9C3;color:#78350F' : `background:${iColor(intent)}`;
+    const badge=intent?`<span class="rb" style="${badgeStyle}">${esc(intent)}</span>`:'';
     const rawPhone=rv(f['号码/微信'])||'';
-    const callBtn=rawPhone?`<a class="call-btn" href="tel:${esc(rawPhone)}" onclick="event.stopPropagation()">📞</a>`:'';
+    const phoneNum=rawPhone.replace(/\s/g,'');
+    const callBtn=phoneNum&&/^\d{7,}$/.test(phoneNum)
+      ?`<a class="call-btn" href="tel:${phoneNum}" onclick="event.stopPropagation()" title="拨号"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00C173" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></a>`
+      :'';
     return `<div class="ri" onclick="openRecord(${idx})">
       <div class="ri-left">
         <div class="rn">${esc(name)}</div>
         <div class="rp">${esc(phone)}</div>
         ${dateTxt?`<div class="ri-meta">${esc(dateTxt)}</div>`:''}
       </div>
-      ${callBtn}${badge}
+      <div class="ri-right">${callBtn}${badge}</div>
     </div>`;
   }).join('');
 }
@@ -784,7 +791,7 @@ document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')d
 const filterMulti = {}; // 多选字段（意向、客群）
 const filterSingle = {}; // 单选字段（日期、自有等）
 
-const intentColorMap = {A:'var(--iA)',B:'var(--iB)',C:'var(--iC)',D:'var(--iD)',E:'var(--iE)',F:'var(--iF)',G:'var(--iG)','已报名':'var(--ink)'};
+const intentColorMap = {A:'var(--iA)',B:'var(--iB)',C:'var(--iC)',D:'var(--iD)',E:'var(--iE)',F:'var(--iF)',G:'var(--iG)','已报名':'#FEF9C3'};
 
 function toggleMulti(btn, groupId) {
   const field = btn.dataset.field;
