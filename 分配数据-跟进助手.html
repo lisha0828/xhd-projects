@@ -16,21 +16,51 @@
 }
 html,body{height:100%;background:var(--bg);font-family:-apple-system,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;color:var(--text)}
 .screen{display:none;min-height:100vh}.screen.active{display:block}
+
+/* ── 顶部栏 ── */
 .hd{background:var(--navy);color:#fff;padding:calc(env(safe-area-inset-top)+14px) 18px 16px;position:sticky;top:0;z-index:50}
-.hd-back{background:none;border:none;color:rgba(255,255,255,.65);font-size:15px;padding:0 0 10px;cursor:pointer;font-family:inherit;display:block}
+.hd-back{background:none;border:none;color:rgba(255,255,255,.65);font-size:15px;padding:0 0 8px;cursor:pointer;font-family:inherit;display:block}
 .hd-title{font-size:19px;font-weight:700;letter-spacing:-.3px}
-.hd-sub{font-size:13px;color:rgba(255,255,255,.55);margin-top:2px}
+.hd-sub{font-size:13px;color:rgba(255,255,255,.5);margin-top:3px}
+
+/* ── 首页搜索栏 ── */
 .sr{display:flex;gap:8px;margin-top:12px}
 .si{flex:1;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.18);border-radius:11px;padding:11px 14px;color:#fff;font-size:16px;outline:none;font-family:inherit}
 .si::placeholder{color:rgba(255,255,255,.35)}.si:focus{border-color:rgba(255,255,255,.4)}
 .sb{background:var(--green);border:none;border-radius:11px;padding:0 18px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
 .sb:active{background:var(--green2)}
-.ct{padding:14px 14px calc(env(safe-area-inset-bottom)+14px)}
+
+/* ── 内容区 ── */
+.ct{padding:18px 14px calc(env(safe-area-inset-bottom)+18px)}
 .ctd{padding:14px 14px calc(env(safe-area-inset-bottom)+82px)}
+
+/* ── 首页按钮网格 ── */
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.cat-btn{
+  background:var(--card);border:none;border-radius:var(--radius);
+  padding:20px 16px;text-align:left;cursor:pointer;
+  display:flex;flex-direction:column;gap:6px;
+  box-shadow:0 1px 4px rgba(0,0,0,.06);
+  transition:transform .1s
+}
+.cat-btn:active{transform:scale(.97);background:#f5f7fa}
+.cat-icon{font-size:28px;line-height:1}
+.cat-label{font-size:15px;font-weight:700;color:var(--text)}
+.cat-desc{font-size:12px;color:var(--muted);line-height:1.4}
+/* 每个按钮的左侧色条 */
+.cat-btn.c-orange{border-left:4px solid #FF6B2B}
+.cat-btn.c-blue  {border-left:4px solid #1677FF}
+.cat-btn.c-green {border-left:4px solid #00B96B}
+.cat-btn.c-purple{border-left:4px solid #722ED1}
+
+/* ── 列表页结果 ── */
 .ri{background:var(--card);border-radius:var(--radius);padding:13px 15px;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
 .ri:active{background:#f5f7fa}
 .rn{font-size:16px;font-weight:600;margin-bottom:3px}.rp{font-size:13px;color:var(--muted)}
-.rb{min-width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.ri-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.rb{min-width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;margin-left:10px}
+
+/* ── 详情页卡片 ── */
 .card{background:var(--card);border-radius:var(--radius);margin-bottom:11px;overflow:hidden}
 .cl{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.6px;padding:13px 15px 0;text-transform:uppercase}
 .ig{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;padding:10px 12px 14px}
@@ -41,16 +71,26 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'PingFang S
 .ib[data-v="C"].sel{background:var(--iC)}.ib[data-v="D"].sel{background:var(--iD)}
 .ib[data-v="E"].sel{background:var(--iE)}.ib[data-v="F"].sel{background:var(--iF)}
 .ib[data-v="G"].sel{background:var(--iG)}.ib[data-v="已报名"].sel{background:var(--navy)}
+.yn-row{display:flex;gap:8px;margin-top:6px}
+.yn-btn{flex:1;height:40px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit}
+.yn-btn.sel-yes{background:#E6F7F0;border-color:var(--green);color:var(--green)}
+.yn-btn.sel-no {background:#FFF1F0;border-color:#FF4D4F;color:#FF4D4F}
 .fr{padding:11px 15px;border-top:1px solid var(--border)}.fr:first-of-type{border-top:none}
 .fl{font-size:12px;color:var(--muted);margin-bottom:5px}
 .fi{width:100%;border:none;outline:none;font-size:15px;font-family:inherit;color:var(--text);background:transparent;resize:none}
-.fita{min-height:72px;line-height:1.55}.firo{font-size:14px;color:#444;line-height:1.55}.firo.empty{color:#bbb}
+.fita{min-height:72px;line-height:1.55}
+.firo{font-size:14px;color:#444;line-height:1.55}.firo.empty{color:#bbb}
 input[type=date].fi{color:var(--text)}
+
+/* ── 保存栏 ── */
 .savebar{position:fixed;bottom:0;left:0;right:0;padding:10px 14px;padding-bottom:calc(env(safe-area-inset-bottom)+10px);background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-top:1px solid var(--border);z-index:100}
 .savebtn{width:100%;background:var(--green);color:#fff;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer}
 .savebtn:active{background:var(--green2)}.savebtn:disabled{background:#bbb;cursor:not-allowed}
-.empty-state{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px}
+
+/* ── 杂项 ── */
+.empty-state{text-align:center;padding:50px 20px;color:var(--muted);font-size:14px}
 .ei{font-size:40px;margin-bottom:10px}
+.loading{text-align:center;padding:50px 20px;color:var(--muted);font-size:14px}
 .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(15,30,53,.88);color:#fff;padding:9px 20px;border-radius:24px;font-size:14px;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;z-index:999}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .legend{background:var(--card);border-radius:var(--radius);padding:12px 15px;margin-bottom:11px;font-size:12px;color:var(--muted);line-height:1.9}
@@ -59,29 +99,61 @@ input[type=date].fi{color:var(--text)}
 </head>
 <body>
 
-<!-- 搜索页 -->
-<div id="s-search" class="screen active">
+<!-- ═══ 首页 ═══ -->
+<div id="s-home" class="screen active">
   <div class="hd">
     <div class="hd-title">分配数据跟进</div>
     <div class="sr">
-      <input id="q" class="si" type="search" placeholder="输入手机号 或 客户姓名" autocomplete="off">
+      <input id="q" class="si" type="search" placeholder="搜索姓名或手机号…" autocomplete="off">
       <button class="sb" onclick="doSearch()">搜索</button>
     </div>
   </div>
-  <div class="ct" id="results">
-    <div class="empty-state"><div class="ei">📋</div>搜索客户查看跟进情况</div>
+  <div class="ct">
+    <div class="btn-grid">
+      <button class="cat-btn c-orange" onclick="loadList('today')">
+        <div class="cat-icon">📞</div>
+        <div class="cat-label">今日待联系</div>
+        <div class="cat-desc">下次跟进日期<br>= 今天</div>
+      </button>
+      <button class="cat-btn c-blue" onclick="loadList('week')">
+        <div class="cat-icon">📅</div>
+        <div class="cat-label">本周待联系</div>
+        <div class="cat-desc">下次跟进日期<br>在本周内</div>
+      </button>
+      <button class="cat-btn c-green" onclick="loadList('enrolled')">
+        <div class="cat-icon">✅</div>
+        <div class="cat-label">已报名客户</div>
+        <div class="cat-desc">意向标记为<br>已报名</div>
+      </button>
+      <button class="cat-btn c-purple" onclick="loadList('month')">
+        <div class="cat-icon">📋</div>
+        <div class="cat-label">本月分配</div>
+        <div class="cat-desc">分配时间<br>在本月内</div>
+      </button>
+    </div>
   </div>
 </div>
 
-<!-- 详情页 -->
+<!-- ═══ 列表页 ═══ -->
+<div id="s-list" class="screen">
+  <div class="hd">
+    <button class="hd-back" onclick="goHome()">← 返回</button>
+    <div id="l-title" class="hd-title">—</div>
+    <div id="l-sub" class="hd-sub">加载中…</div>
+  </div>
+  <div class="ct" id="list-content">
+    <div class="loading">加载中…</div>
+  </div>
+</div>
+
+<!-- ═══ 详情页 ═══ -->
 <div id="s-detail" class="screen">
   <div class="hd">
-    <button class="hd-back" onclick="goSearch()">← 返回搜索</button>
+    <button class="hd-back" onclick="goList()">← 返回列表</button>
     <div id="d-name" class="hd-title">—</div>
     <div id="d-phone" class="hd-sub">—</div>
   </div>
   <div class="ctd">
-    <!-- 意向 -->
     <div class="card">
       <div class="cl">意向</div>
       <div class="ig">
@@ -95,14 +167,12 @@ input[type=date].fi{color:var(--text)}
         <button class="ib ifw" data-v="已报名" onclick="setIntent('已报名')">✓ 已报名</button>
       </div>
     </div>
-    <!-- 通话记录 -->
     <div class="card">
       <div class="fr">
         <div class="fl">最新通话记录</div>
         <textarea id="f-call" class="fi fita" placeholder="记录本次通话内容…"></textarea>
       </div>
     </div>
-    <!-- 下次跟进 -->
     <div class="card">
       <div class="fr">
         <div class="fl">下次跟进日期</div>
@@ -113,7 +183,25 @@ input[type=date].fi{color:var(--text)}
         <input type="text" id="f-purpose" class="fi" placeholder="如：推进意向、确认报名…">
       </div>
     </div>
-    <!-- 只读信息 -->
+    <div class="card">
+      <div class="fr" style="border-top:none">
+        <div class="fl">特殊提醒时间</div>
+        <input type="date" id="f-remind-date" class="fi">
+      </div>
+      <div class="fr">
+        <div class="fl">特殊提醒事项</div>
+        <input type="text" id="f-remind-note" class="fi" placeholder="需要特别注意的事项…">
+      </div>
+    </div>
+    <div class="card">
+      <div class="fr" style="border-top:none">
+        <div class="fl">留学报备</div>
+        <div class="yn-row">
+          <button class="yn-btn" id="yn-yes" onclick="setYN('是')">是</button>
+          <button class="yn-btn" id="yn-no"  onclick="setYN('否')">否</button>
+        </div>
+      </div>
+    </div>
     <div class="card">
       <div class="fr" style="border-top:none">
         <div class="fl">具体信息</div>
@@ -128,7 +216,6 @@ input[type=date].fi{color:var(--text)}
         <div id="f-atime" class="firo empty">—</div>
       </div>
     </div>
-    <!-- 意向说明 -->
     <div class="legend">
       <strong>A</strong> 明确意向 &nbsp;·&nbsp; <strong>B</strong> 待确定 &nbsp;·&nbsp;
       <strong>C</strong> 低价值 &nbsp;·&nbsp; <strong>D</strong> 长期 &nbsp;·&nbsp;
@@ -144,9 +231,6 @@ input[type=date].fi{color:var(--text)}
 <div id="toast" class="toast"></div>
 
 <script>
-// ══════════════════════════════════════
-// 代理地址（统一入口，用 action 区分操作）
-// ══════════════════════════════════════
 const PROXY = 'https://feishu-le-proxy-wyyuhgxhep.cn-hangzhou.fcapp.run';
 
 async function proxyCall(action, params) {
@@ -156,7 +240,6 @@ async function proxyCall(action, params) {
     body: JSON.stringify({action, ...params}),
   });
   const outer = await resp.json();
-  // FC 返回 {statusCode, headers, body(字符串)}
   return typeof outer.body === 'string' ? JSON.parse(outer.body) : outer;
 }
 
@@ -172,12 +255,14 @@ function rv(v) {
 function msToDateInput(ms) {
   if (!ms) return '';
   const d = new Date(Number(ms));
-  return isNaN(d) ? '' : d.toISOString().slice(0,10);
+  if (isNaN(d)) return '';
+  const bj = new Date(d.getTime() + 8*60*60*1000);
+  return `${bj.getUTCFullYear()}-${String(bj.getUTCMonth()+1).padStart(2,'0')}-${String(bj.getUTCDate()).padStart(2,'0')}`;
 }
 function fmtDate(ms) {
   if (!ms) return '';
   const d = new Date(Number(ms));
-  return isNaN(d) ? '' : d.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric'});
+  return isNaN(d) ? '' : d.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Shanghai'});
 }
 function iColor(v) {
   return ({A:'#00B96B',B:'#1677FF',C:'#FA8C16',D:'#722ED1',E:'#8C8C8C',F:'#FF4D4F',G:'#CF1322','已报名':'#0F1E35'})[v]||'#bbb';
@@ -185,59 +270,110 @@ function iColor(v) {
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function setRO(id,val){const e=document.getElementById(id);e.textContent=val||'—';e.className='firo'+(val?'':' empty')}
 
-// ── 搜索 ──
-let store=[], cur=null, curIntent='';
+const CAT_NAMES = {
+  today:    '今日待联系',
+  week:     '本周待联系',
+  enrolled: '已报名客户',
+  month:    '本月分配',
+};
 
+// ── 列表数据 ──
+let listStore = [], curCat = '';
+
+// ── 搜索（从首页触发，进入列表页显示结果）──
 async function doSearch() {
   const q = document.getElementById('q').value.trim();
   if (!q) return;
-  const el = document.getElementById('results');
-  el.innerHTML = '<div class="empty-state">搜索中…</div>';
+  curCat = 'search';
+  document.getElementById('l-title').textContent = '搜索结果';
+  document.getElementById('l-sub').textContent = '「' + q + '」';
+  document.getElementById('list-content').innerHTML = '<div class="loading">搜索中…</div>';
+  showScreen('s-list');
   try {
     const data = await proxyCall('search', {q});
-    store = data.data?.items || [];
-    if (!store.length) {
-      el.innerHTML = `<div class="empty-state"><div class="ei">😕</div>没有找到「${esc(q)}」</div>`;
-      return;
-    }
-    el.innerHTML = store.map((item,idx) => {
-      const f = item.fields;
-      const name  = rv(f['姓名']) || '（无姓名）';
-      const phone = rv(f['号码/微信']) || '—';
-      const intent = rv(f['意向']) || '';
-      const badge = intent
-        ? `<div class="rb" style="background:${iColor(intent)}">${esc(intent)}</div>`
-        : '<div style="width:30px"></div>';
-      return `<div class="ri" onclick="openRecord(${idx})">
-        <div><div class="rn">${esc(name)}</div><div class="rp">${esc(phone)}</div></div>
-        ${badge}
-      </div>`;
-    }).join('');
+    listStore = data.data?.items || [];
+    renderList();
   } catch(e) {
-    el.innerHTML = `<div class="empty-state"><div class="ei">⚠️</div>${esc(e.message)}</div>`;
+    document.getElementById('list-content').innerHTML =
+      `<div class="empty-state"><div class="ei">⚠️</div>${esc(e.message)}</div>`;
   }
 }
 
+// ── 分类列表（从首页按钮触发）──
+async function loadList(cat) {
+  curCat = cat;
+  document.getElementById('l-title').textContent = CAT_NAMES[cat] || cat;
+  document.getElementById('l-sub').textContent = '加载中…';
+  document.getElementById('list-content').innerHTML = '<div class="loading">加载中…</div>';
+  showScreen('s-list');
+  try {
+    const data = await proxyCall(cat);
+    listStore = data.data?.items || [];
+    document.getElementById('l-sub').textContent = `共 ${listStore.length} 条`;
+    renderList();
+  } catch(e) {
+    document.getElementById('l-sub').textContent = '加载失败';
+    document.getElementById('list-content').innerHTML =
+      `<div class="empty-state"><div class="ei">⚠️</div>${esc(e.message)}</div>`;
+  }
+}
+
+function renderList() {
+  const el = document.getElementById('list-content');
+  if (!listStore.length) {
+    el.innerHTML = '<div class="empty-state"><div class="ei">😌</div>暂无数据</div>';
+    return;
+  }
+  el.innerHTML = listStore.map((item, idx) => {
+    const f = item.fields;
+    const name   = rv(f['姓名']) || '（无姓名）';
+    const phone  = rv(f['号码/微信']) || '—';
+    const intent = rv(f['意向']) || '';
+    // 显示下次跟进日期或分配时间作为副标题
+    const dateMs  = f['下次跟进日期'] || f['分配时间'];
+    const dateTxt = dateMs ? fmtDate(dateMs) : '';
+    const badge   = intent
+      ? `<div class="rb" style="background:${iColor(intent)}">${esc(intent)}</div>`
+      : '<div style="width:30px"></div>';
+    return `<div class="ri" onclick="openRecord(${idx})">
+      <div style="flex:1;min-width:0">
+        <div class="rn">${esc(name)}</div>
+        <div class="rp">${esc(phone)}</div>
+        ${dateTxt ? `<div class="ri-meta">${esc(dateTxt)}</div>` : ''}
+      </div>
+      ${badge}
+    </div>`;
+  }).join('');
+}
+
 // ── 打开详情 ──
+let cur = null, curIntent = '', curYN = '';
+
 function openRecord(idx) {
-  cur = store[idx];
+  cur = listStore[idx];
   const f = cur.fields;
   document.getElementById('d-name').textContent  = rv(f['姓名']) || '（无姓名）';
   document.getElementById('d-phone').textContent = rv(f['号码/微信']) || '—';
-  curIntent = rv(f['意向']) || '';
-  renderIntent();
-  document.getElementById('f-call').value    = rv(f['最新通话记录']) || '';
-  document.getElementById('f-date').value    = msToDateInput(f['下次跟进日期']);
-  document.getElementById('f-purpose').value = rv(f['下次跟进目的']) || '';
+  curIntent = rv(f['意向']) || '';  renderIntent();
+  document.getElementById('f-call').value         = rv(f['最新通话记录']) || '';
+  document.getElementById('f-date').value         = msToDateInput(f['下次跟进日期']);
+  document.getElementById('f-purpose').value      = rv(f['下次跟进目的']) || '';
+  document.getElementById('f-remind-date').value  = msToDateInput(f['特殊提醒时间']);
+  document.getElementById('f-remind-note').value  = rv(f['特殊提醒事项']) || '';
+  curYN = rv(f['留学报备']) || '';  renderYN();
   setRO('f-info',  rv(f['具体信息']));
   setRO('f-owner', rv(f['是否自有/曾哥/他人']));
   setRO('f-atime', fmtDate(f['分配时间']));
   showScreen('s-detail');
 }
 
-// ── 意向 ──
 function setIntent(v){curIntent=(curIntent===v)?'':v;renderIntent();}
 function renderIntent(){document.querySelectorAll('.ib').forEach(b=>b.classList.toggle('sel',b.dataset.v===curIntent));}
+function setYN(v){curYN=(curYN===v)?'':v;renderYN();}
+function renderYN(){
+  document.getElementById('yn-yes').className='yn-btn'+(curYN==='是'?' sel-yes':'');
+  document.getElementById('yn-no').className='yn-btn'+(curYN==='否'?' sel-no':'');
+}
 
 // ── 保存 ──
 async function doSave() {
@@ -253,6 +389,11 @@ async function doSave() {
     if (dv) fields['下次跟进日期'] = new Date(dv+'T15:59:00.000Z').getTime();
     const pu = document.getElementById('f-purpose').value.trim();
     if (pu) fields['下次跟进目的'] = pu;
+    const rd = document.getElementById('f-remind-date').value;
+    if (rd) fields['特殊提醒时间'] = new Date(rd+'T15:59:00.000Z').getTime();
+    const rn = document.getElementById('f-remind-note').value.trim();
+    if (rn) fields['特殊提醒事项'] = rn;
+    if (curYN) fields['留学报备'] = curYN;
     if (!Object.keys(fields).length){toast('没有需要保存的变更');btn.disabled=false;btn.textContent='保存更新';return;}
     const data = await proxyCall('update', {recordId: cur.record_id, fields});
     if (data.code===0){toast('✅ 已保存');Object.assign(cur.fields,fields);}
@@ -262,8 +403,13 @@ async function doSave() {
 }
 
 // ── 导航 ──
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
-function goSearch(){showScreen('s-search');}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function goHome(){showScreen('s-home');}
+function goList(){showScreen('s-list');}
 
 // ── Toast ──
 let _tt;
