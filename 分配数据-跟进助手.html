@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>跟进助手</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --navy:#0F1E35;
+  --navy2:#1A2E4A;
+  --green:#00B96B;
+  --green2:#00A35E;
+  --bg:#EEF1F6;
+  --card:#FFFFFF;
+  --text:#111827;
+  --muted:#6B7280;
+  --border:#E5E8EE;
+  --radius:14px;
+  --intent-A:#00B96B;
+  --intent-B:#1677FF;
+  --intent-C:#FA8C16;
+  --intent-D:#722ED1;
+  --intent-E:#8C8C8C;
+  --intent-F:#FF4D4F;
+  --intent-G:#CF1322;
+  --intent-已报名:#0F1E35;
+}
+html,body{height:100%;background:var(--bg);font-family:-apple-system,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;color:var(--text)}
+
+/* ── screens ── */
+.screen{display:none;min-height:100vh}
+.screen.active{display:block}
+
+/* ── header ── */
+.hd{
+  background:var(--navy);
+  color:#fff;
+  padding:calc(env(safe-area-inset-top)+14px) 18px 16px;
+  position:sticky;top:0;z-index:50
+}
+.hd-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.hd-back{background:none;border:none;color:rgba(255,255,255,.65);font-size:15px;padding:0;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit}
+.hd-title{font-size:19px;font-weight:700;letter-spacing:-.3px}
+.hd-sub{font-size:13px;color:rgba(255,255,255,.55);margin-top:2px}
+
+/* ── search bar ── */
+.search-row{display:flex;gap:8px}
+.search-input{
+  flex:1;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.18);
+  border-radius:11px;padding:11px 14px;color:#fff;font-size:16px;outline:none;font-family:inherit
+}
+.search-input::placeholder{color:rgba(255,255,255,.35)}
+.search-input:focus{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.16)}
+.search-btn{
+  background:var(--green);border:none;border-radius:11px;
+  padding:0 18px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;
+  white-space:nowrap
+}
+.search-btn:active{background:var(--green2)}
+
+/* ── content ── */
+.content{padding:14px 14px calc(env(safe-area-inset-bottom)+14px)}
+.content-detail{padding:14px 14px calc(env(safe-area-inset-bottom)+80px)}
+
+/* ── result cards ── */
+.result-item{
+  background:var(--card);border-radius:var(--radius);
+  padding:13px 15px;margin-bottom:9px;
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;border:1.5px solid transparent
+}
+.result-item:active{background:#f5f7fa;border-color:var(--border)}
+.r-name{font-size:16px;font-weight:600;margin-bottom:3px}
+.r-phone{font-size:13px;color:var(--muted)}
+.r-badge{
+  min-width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:#fff;flex-shrink:0
+}
+
+/* ── section card ── */
+.card{background:var(--card);border-radius:var(--radius);margin-bottom:11px;overflow:hidden}
+.card-label{
+  font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.6px;
+  padding:13px 15px 0;text-transform:uppercase
+}
+
+/* ── intent grid ── */
+.intent-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;padding:10px 12px 14px}
+.i-btn{
+  height:44px;border-radius:10px;border:1.5px solid var(--border);
+  background:#fff;font-size:14px;font-weight:700;color:var(--muted);
+  cursor:pointer;transition:all .12s;font-family:inherit
+}
+.i-btn:active{opacity:.8}
+.i-full{grid-column:1/-1;height:44px}
+.i-btn.sel{color:#fff;border-color:transparent}
+.i-btn[data-v="A"].sel{background:var(--intent-A)}
+.i-btn[data-v="B"].sel{background:var(--intent-B)}
+.i-btn[data-v="C"].sel{background:var(--intent-C)}
+.i-btn[data-v="D"].sel{background:var(--intent-D)}
+.i-btn[data-v="E"].sel{background:var(--intent-E)}
+.i-btn[data-v="F"].sel{background:var(--intent-F)}
+.i-btn[data-v="G"].sel{background:var(--intent-G)}
+.i-btn[data-v="已报名"].sel{background:var(--intent-已报名)}
+
+/* ── field rows ── */
+.field-row{padding:11px 15px;border-top:1px solid var(--border)}
+.field-row:first-of-type{border-top:none}
+.fl{font-size:12px;color:var(--muted);margin-bottom:5px}
+.fi{
+  width:100%;border:none;outline:none;font-size:15px;
+  font-family:inherit;color:var(--text);background:transparent;resize:none
+}
+.fi-ta{min-height:72px;line-height:1.55}
+.fi-ro{font-size:14px;color:#444;line-height:1.55}
+.fi-ro.empty{color:#bbb}
+input[type=date].fi{color:var(--text)}
+
+/* ── save bar ── */
+.save-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  padding:10px 14px;padding-bottom:calc(env(safe-area-inset-bottom)+10px);
+  background:rgba(255,255,255,.95);backdrop-filter:blur(10px);
+  border-top:1px solid var(--border);z-index:100
+}
+.save-btn{
+  width:100%;background:var(--green);color:#fff;border:none;
+  border-radius:12px;padding:14px;font-size:16px;font-weight:600;
+  font-family:inherit;cursor:pointer
+}
+.save-btn:active{background:var(--green2)}
+.save-btn:disabled{background:#bbb;cursor:not-allowed}
+
+/* ── states ── */
+.loading,.empty-state{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px}
+.empty-icon{font-size:40px;margin-bottom:10px}
+
+/* ── toast ── */
+.toast{
+  position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:rgba(15,30,53,.88);color:#fff;padding:9px 20px;border-radius:24px;
+  font-size:14px;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;z-index:999
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── intent legend ── */
+.legend{
+  background:var(--card);border-radius:var(--radius);
+  padding:12px 15px;margin-bottom:11px;
+  font-size:12px;color:var(--muted);line-height:1.8
+}
+.legend strong{font-weight:600;color:var(--text)}
+
+/* ── assign time chip ── */
+.chip{
+  display:inline-block;background:#F0F4F8;border-radius:6px;
+  padding:3px 9px;font-size:12px;color:var(--muted);margin-top:3px
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ SCREEN: SEARCH ═══ -->
+<div id="s-search" class="screen active">
+  <div class="hd">
+    <div class="hd-top"><div class="hd-title">分配数据跟进</div></div>
+    <div class="search-row">
+      <input id="q" class="search-input" type="search" placeholder="输入手机号 或 客户姓名" autocomplete="off"
+        onkeydown="if(event.key==='Enter')search()">
+      <button class="search-btn" onclick="search()">搜索</button>
+    </div>
+  </div>
+  <div class="content" id="results">
+    <div class="empty-state"><div class="empty-icon">📋</div>搜索客户查看跟进情况</div>
+  </div>
+</div>
+
+<!-- ═══ SCREEN: DETAIL ═══ -->
+<div id="s-detail" class="screen">
+  <div class="hd">
+    <div class="hd-top">
+      <button class="hd-back" onclick="goSearch()">← 返回</button>
+    </div>
+    <div id="d-name" class="hd-title">—</div>
+    <div id="d-phone" class="hd-sub">—</div>
+  </div>
+
+  <div class="content-detail">
+
+    <!-- 意向 -->
+    <div class="card">
+      <div class="card-label">意向</div>
+      <div class="intent-grid">
+        <button class="i-btn" data-v="A" onclick="setIntent('A')">A</button>
+        <button class="i-btn" data-v="B" onclick="setIntent('B')">B</button>
+        <button class="i-btn" data-v="C" onclick="setIntent('C')">C</button>
+        <button class="i-btn" data-v="D" onclick="setIntent('D')">D</button>
+        <button class="i-btn" data-v="E" onclick="setIntent('E')">E</button>
+        <button class="i-btn" data-v="F" onclick="setIntent('F')">F</button>
+        <button class="i-btn" data-v="G" onclick="setIntent('G')">G</button>
+        <button class="i-btn i-full" data-v="已报名" onclick="setIntent('已报名')">✓ 已报名</button>
+      </div>
+    </div>
+
+    <!-- 最新通话记录 -->
+    <div class="card">
+      <div class="field-row">
+        <div class="fl">最新通话记录</div>
+        <textarea id="f-call" class="fi fi-ta" placeholder="记录本次通话内容…"></textarea>
+      </div>
+    </div>
+
+    <!-- 下次跟进 -->
+    <div class="card">
+      <div class="field-row">
+        <div class="fl">下次跟进日期</div>
+        <input type="date" id="f-date" class="fi">
+      </div>
+      <div class="field-row">
+        <div class="fl">跟进目的</div>
+        <input type="text" id="f-purpose" class="fi" placeholder="如：推进意向、确认报名…">
+      </div>
+    </div>
+
+    <!-- 只读信息 -->
+    <div class="card">
+      <div class="field-row" style="border-top:none">
+        <div class="fl">具体信息</div>
+        <div id="f-info" class="fi-ro empty">—</div>
+      </div>
+      <div class="field-row">
+        <div class="fl">是否自有</div>
+        <div id="f-owner" class="fi-ro empty">—</div>
+      </div>
+      <div class="field-row">
+        <div class="fl">分配时间</div>
+        <div id="f-atime" class="fi-ro empty">—</div>
+      </div>
+    </div>
+
+    <!-- 意向说明 -->
+    <div class="legend">
+      <strong>A</strong> 明确意向 &nbsp;·&nbsp; <strong>B</strong> 待确定 &nbsp;·&nbsp;
+      <strong>C</strong> 低价值 &nbsp;·&nbsp; <strong>D</strong> 长期 &nbsp;·&nbsp;
+      <strong>E</strong> 无意向 &nbsp;·&nbsp; <strong>F</strong> 无效 &nbsp;·&nbsp;
+      <strong>G</strong> 已流失
+    </div>
+
+  </div>
+
+  <div class="save-bar">
+    <button id="save-btn" class="save-btn" onclick="save()">保存更新</button>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* ══════════════════════════════
+   配置 — 使用「数据分配」应用凭证
+   ══════════════════════════════ */
+const CFG = {
+  appId:    'cli_a94516bd48b9dcc9',
+  appSec:   'E670nfXT7M2ip81Ui79IvdJYiABPc3HU',
+  appToken: 'GkOUbvKLqaA7NoszFkwcDh3lnTf',
+  tableId:  'tbl4RL5JzFRLUOQ3',
+  base:     'https://open.feishu.cn',
+};
+
+/* ── token cache ── */
+let _tok = null, _tokExp = 0;
+async function tok() {
+  if (_tok && Date.now() < _tokExp) return _tok;
+  const r = await fetch(`${CFG.base}/open-apis/auth/v3/tenant_access_token/internal`, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({app_id: CFG.appId, app_secret: CFG.appSec}),
+  });
+  const d = await r.json();
+  if (!d.tenant_access_token) throw new Error('获取 Token 失败：' + JSON.stringify(d));
+  _tok = d.tenant_access_token;
+  _tokExp = Date.now() + (d.expire - 120) * 1000;
+  return _tok;
+}
+
+/* ── field value extractor ── */
+function rv(v) {
+  if (v == null) return '';
+  if (typeof v === 'string') return v;
+  if (typeof v === 'number') return v;
+  if (Array.isArray(v)) return v.map(i => i.text || '').join('');
+  if (typeof v === 'object') return v.text || v.value || '';
+  return String(v);
+}
+
+function msToDate(ms) {
+  if (!ms) return '';
+  const d = new Date(Number(ms));
+  if (isNaN(d)) return '';
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${dd}`;
+}
+
+function fmtDate(ms) {
+  if (!ms) return '';
+  const d = new Date(Number(ms));
+  if (isNaN(d)) return '';
+  return d.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric'});
+}
+
+function intentColor(v) {
+  const m = {A:'#00B96B',B:'#1677FF',C:'#FA8C16',D:'#722ED1',E:'#8C8C8C',F:'#FF4D4F',G:'#CF1322','已报名':'#0F1E35'};
+  return m[v] || '#bbb';
+}
+
+/* ══════════════════════════════
+   搜索
+   ══════════════════════════════ */
+let resultStore = [];
+
+async function search() {
+  const q = document.getElementById('q').value.trim();
+  if (!q) return;
+  const el = document.getElementById('results');
+  el.innerHTML = '<div class="loading">搜索中…</div>';
+  try {
+    const t = await tok();
+    const resp = await fetch(
+      `${CFG.base}/open-apis/bitable/v1/apps/${CFG.appToken}/tables/${CFG.tableId}/records/search?page_size=30`,
+      {
+        method: 'POST',
+        headers: {'Content-Type':'application/json','Authorization':'Bearer '+t},
+        body: JSON.stringify({
+          filter: {
+            conjunction: 'or',
+            conditions: [
+              {field_name:'号码/微信', operator:'contains', value:[q]},
+              {field_name:'姓名',      operator:'contains', value:[q]},
+            ],
+          },
+        }),
+      }
+    );
+    const data = await resp.json();
+    resultStore = data.data?.items || [];
+    if (resultStore.length === 0) {
+      el.innerHTML = `<div class="empty-state"><div class="empty-icon">😕</div>没有找到「${q}」</div>`;
+      return;
+    }
+    el.innerHTML = resultStore.map((item, idx) => {
+      const f = item.fields;
+      const name  = rv(f['姓名']) || '（无姓名）';
+      const phone = rv(f['号码/微信']) || '—';
+      const intent = rv(f['意向']) || '';
+      const color = intentColor(intent);
+      const badge = intent
+        ? `<div class="r-badge" style="background:${color}">${intent}</div>`
+        : `<div style="width:30px"></div>`;
+      return `<div class="result-item" onclick="openRecord(${idx})">
+        <div>
+          <div class="r-name">${esc(name)}</div>
+          <div class="r-phone">${esc(phone)}</div>
+        </div>
+        ${badge}
+      </div>`;
+    }).join('');
+  } catch (e) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>${e.message}</div>`;
+  }
+}
+
+/* ══════════════════════════════
+   详情
+   ══════════════════════════════ */
+let cur = null;
+let curIntent = '';
+
+function openRecord(idx) {
+  cur = resultStore[idx];
+  const f = cur.fields;
+
+  const name  = rv(f['姓名']) || '（无姓名）';
+  const phone = rv(f['号码/微信']) || '—';
+  document.getElementById('d-name').textContent = name;
+  document.getElementById('d-phone').textContent = phone;
+
+  // 意向
+  curIntent = rv(f['意向']) || '';
+  renderIntent();
+
+  // 最新通话记录
+  document.getElementById('f-call').value = rv(f['最新通话记录']) || '';
+
+  // 下次跟进日期
+  document.getElementById('f-date').value = msToDate(f['下次跟进日期']);
+
+  // 跟进目的
+  document.getElementById('f-purpose').value = rv(f['下次跟进目的']) || '';
+
+  // 只读字段
+  setRO('f-info',  rv(f['具体信息']));
+  setRO('f-owner', rv(f['是否自有/曾哥/他人']));
+  setRO('f-atime', fmtDate(f['分配时间']));
+
+  showScreen('s-detail');
+}
+
+function setRO(id, val) {
+  const el = document.getElementById(id);
+  if (val) { el.textContent = val; el.className = 'fi-ro'; }
+  else     { el.textContent = '—'; el.className = 'fi-ro empty'; }
+}
+
+function setIntent(v) {
+  curIntent = (curIntent === v) ? '' : v;
+  renderIntent();
+}
+
+function renderIntent() {
+  document.querySelectorAll('.i-btn').forEach(btn => {
+    btn.classList.toggle('sel', btn.dataset.v === curIntent);
+  });
+}
+
+/* ══════════════════════════════
+   保存
+   ══════════════════════════════ */
+async function save() {
+  if (!cur) return;
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true;
+  btn.textContent = '保存中…';
+
+  try {
+    const t = await tok();
+    const fields = {};
+
+    if (curIntent) fields['意向'] = curIntent;
+
+    const call = document.getElementById('f-call').value.trim();
+    if (call) fields['最新通话记录'] = call;
+
+    const dateVal = document.getElementById('f-date').value;
+    if (dateVal) {
+      // 转为北京时间当天23:59时间戳（毫秒）
+      const d = new Date(dateVal + 'T15:59:00.000Z');
+      fields['下次跟进日期'] = d.getTime();
+    }
+
+    const purpose = document.getElementById('f-purpose').value.trim();
+    if (purpose) fields['下次跟进目的'] = purpose;
+
+    if (Object.keys(fields).length === 0) {
+      toast('没有需要保存的变更');
+      btn.disabled = false;
+      btn.textContent = '保存更新';
+      return;
+    }
+
+    const resp = await fetch(
+      `${CFG.base}/open-apis/bitable/v1/apps/${CFG.appToken}/tables/${CFG.tableId}/records/${cur.record_id}`,
+      {
+        method: 'PUT',
+        headers: {'Content-Type':'application/json','Authorization':'Bearer '+t},
+        body: JSON.stringify({fields}),
+      }
+    );
+    const data = await resp.json();
+
+    if (data.code === 0) {
+      toast('✅ 已保存');
+      // 同步本地数据
+      Object.assign(cur.fields, fields);
+      // 刷新只读区如有改动
+    } else {
+      toast('保存失败：' + (data.msg || JSON.stringify(data)));
+    }
+  } catch (e) {
+    if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
+      toast('⚠️ 网络错误，请检查是否需要代理');
+    } else {
+      toast('错误：' + e.message);
+    }
+  }
+
+  btn.disabled = false;
+  btn.textContent = '保存更新';
+}
+
+/* ══════════════════════════════
+   工具函数
+   ══════════════════════════════ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function goSearch() { showScreen('s-search'); }
+
+let _toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// 回车搜索
+document.getElementById('q').addEventListener('keydown', e => {
+  if (e.key === 'Enter') search();
+});
+</script>
+</body>
+</html>
