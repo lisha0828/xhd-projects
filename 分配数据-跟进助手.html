@@ -75,6 +75,9 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'PingFang S
 .yn-btn{flex:1;height:40px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit}
 .yn-btn.sel-yes{background:#E6F7F0;border-color:var(--green);color:var(--green)}
 .yn-btn.sel-no {background:#FFF1F0;border-color:#FF4D4F;color:#FF4D4F}
+.ow-btn{height:38px;padding:0 14px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit}
+.ow-btn:active{opacity:.8}
+.ow-btn.sel{background:#EEF3FF;border-color:#1677FF;color:#1677FF}
 .fr{padding:11px 15px;border-top:1px solid var(--border)}.fr:first-of-type{border-top:none}
 .fl{font-size:12px;color:var(--muted);margin-bottom:5px}
 .fi{width:100%;border:none;outline:none;font-size:15px;font-family:inherit;color:var(--text);background:transparent;resize:none}
@@ -156,13 +159,15 @@ input[type=date].fi{color:var(--text)}
   <div class="ctd">
     <!-- 基本信息（可编辑）-->
     <div class="card">
-      <div class="fr" style="border-top:none">
-        <div class="fl">姓名</div>
-        <input type="text" id="f-name" class="fi" placeholder="客户姓名…">
-      </div>
-      <div class="fr">
-        <div class="fl">号码/微信</div>
-        <input type="text" id="f-phone" class="fi" placeholder="手机号或微信号…">
+      <div style="display:flex;gap:0;border-bottom:none">
+        <div class="fr" style="border-top:none;flex:1;border-right:1px solid var(--border)">
+          <div class="fl">姓名</div>
+          <input type="text" id="f-name" class="fi" placeholder="客户姓名…">
+        </div>
+        <div class="fr" style="border-top:none;flex:1">
+          <div class="fl">号码/微信</div>
+          <input type="text" id="f-phone" class="fi" placeholder="手机号或微信号…">
+        </div>
       </div>
     </div>
 
@@ -189,7 +194,12 @@ input[type=date].fi{color:var(--text)}
       </div>
       <div class="fr">
         <div class="fl">是否自有/曾哥/他人</div>
-        <div id="f-owner" class="firo empty">—</div>
+        <div style="display:flex;gap:7px;margin-top:6px;flex-wrap:wrap">
+          <button class="ow-btn" data-v="是"   onclick="setOwner('是')">是</button>
+          <button class="ow-btn" data-v="否"   onclick="setOwner('否')">否</button>
+          <button class="ow-btn" data-v="曾哥" onclick="setOwner('曾哥')">曾哥</button>
+          <button class="ow-btn" data-v="他人" onclick="setOwner('他人')">他人</button>
+        </div>
       </div>
       <div class="fr">
         <div class="fl">分配时间</div>
@@ -370,7 +380,7 @@ function renderList() {
 }
 
 // ── 打开详情 ──
-let cur = null, curIntent = '', curYN = '';
+let cur = null, curIntent = '', curYN = '', curOwner = '';
 
 function openRecord(idx) {
   cur = listStore[idx];
@@ -388,6 +398,7 @@ function openRecord(idx) {
   document.getElementById('f-remind-date').value  = msToDateInput(f['特殊提醒时间']);
   document.getElementById('f-remind-note').value  = rv(f['特殊提醒事项']) || '';
   curYN = rv(f['留学报备']) || '';  renderYN();
+  curOwner = rv(f['是否自有/曾哥/他人']) || '';  renderOwner();
   setRO('f-info',  rv(f['具体信息']));
   setRO('f-owner', rv(f['是否自有/曾哥/他人']));
   setRO('f-atime', fmtDate(f['分配时间']));
@@ -401,6 +412,8 @@ function renderYN(){
   document.getElementById('yn-yes').className='yn-btn'+(curYN==='是'?' sel-yes':'');
   document.getElementById('yn-no').className='yn-btn'+(curYN==='否'?' sel-no':'');
 }
+function setOwner(v){curOwner=(curOwner===v)?'':v;renderOwner();}
+function renderOwner(){document.querySelectorAll('.ow-btn').forEach(b=>b.classList.toggle('sel',b.dataset.v===curOwner));}
 
 // ── 保存 ──
 async function doSave() {
@@ -425,6 +438,7 @@ async function doSave() {
     const rn = document.getElementById('f-remind-note').value.trim();
     if (rn) fields['特殊提醒事项'] = rn;
     if (curYN) fields['留学报备'] = curYN;
+    if (curOwner) fields['是否自有/曾哥/他人'] = curOwner;
     if (!Object.keys(fields).length){toast('没有需要保存的变更');btn.disabled=false;btn.textContent='保存更新';return;}
     const data = await proxyCall('update', {recordId: cur.record_id, fields});
     if (data.code===0){toast('✅ 已保存');Object.assign(cur.fields,fields);}
