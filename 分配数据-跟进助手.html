@@ -543,6 +543,9 @@ function goHome(){showScreen('s-home');}
 function goList(){showScreen('s-list');}
 
 // 用 history.pushState 支持浏览器原生返回手势
+// 页面初始化时压入首页状态，让浏览器知道有历史记录
+history.replaceState({screen:'s-home'}, '', location.href);
+
 window.addEventListener('popstate', e=>{
   const state = e.state?.screen;
   if(state){
