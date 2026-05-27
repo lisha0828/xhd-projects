@@ -48,14 +48,16 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'PingFang S
 }
 .hd>*{position:relative;z-index:1;}
 .hd-back{
-  width:36px;height:36px;border-radius:50%;
-  background:rgba(255,255,255,.12);border:none;
-  color:rgba(255,255,255,.9);font-size:18px;
+  width:38px;height:38px;border-radius:50%;
+  background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.25);
+  color:rgba(255,255,255,.95);
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;font-family:inherit;flex-shrink:0;
+  padding:0;
   transition:background .15s,transform .15s cubic-bezier(.34,1.56,.64,1)
 }
-.hd-back:active{background:rgba(255,255,255,.25);transform:scale(.9)}
+.hd-back:active{background:rgba(255,255,255,.28);transform:scale(.9)}
+.hd-back svg{display:block;}
 .hd-sub{padding-bottom:16px !important}
 .hd-row-sub{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .hd-row-sub .hd-info{flex:1;min-width:0}
@@ -321,7 +323,7 @@ input[type=date].fi{color:var(--text)}
         <div id="l-title" class="hd-title">—</div>
         <div id="l-sub" class="hd-phone">加载中…</div>
       </div>
-      <button class="hd-back" onclick="goHome()">↩</button>
+      <button class="hd-back" onclick="goHome()"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 4L6 9L11 14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
   </div>
   <div class="ct" id="list-content"><div class="loading">加载中…</div></div>
@@ -335,7 +337,7 @@ input[type=date].fi{color:var(--text)}
         <div id="d-name" class="hd-title">—</div>
         <div id="d-phone" class="hd-phone">—</div>
       </div>
-      <button class="hd-back" onclick="goList()">↩</button>
+      <button class="hd-back" onclick="goList()"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 4L6 9L11 14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
   </div>
   <div class="ctd">
@@ -460,7 +462,7 @@ input[type=date].fi{color:var(--text)}
       <div class="hd-info">
         <div class="hd-title">自定义筛选</div>
       </div>
-      <button class="hd-back" onclick="goHome()">↩</button>
+      <button class="hd-back" onclick="goHome()"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 4L6 9L11 14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </div>
   </div>
   <div class="ctd" style="padding-bottom:100px">
