@@ -26,18 +26,21 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'PingFang S
 .hd{
   background:var(--ink);
   color:#fff;
-  padding:calc(env(safe-area-inset-top)+16px) 20px 18px;
+  padding:calc(env(safe-area-inset-top)+12px) 20px 20px;
   position:sticky;top:0;z-index:50;
 }
 .hd-back{
-  background:none;border:none;
-  color:rgba(255,255,255,.5);font-size:13px;
-  padding:0 0 10px;cursor:pointer;font-family:inherit;
-  display:inline-flex;align-items:center;gap:5px;letter-spacing:.2px
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.12);border:none;
+  color:rgba(255,255,255,.85);font-size:13px;font-weight:500;
+  padding:7px 14px 7px 10px;border-radius:20px;
+  cursor:pointer;font-family:inherit;margin-bottom:14px;
+  letter-spacing:.1px
 }
-.hd-back:active{color:rgba(255,255,255,.8)}
+.hd-back:active{background:rgba(255,255,255,.2)}
+.hd-back::before{content:'←';font-size:14px}
 .hd-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-.hd-title{font-size:20px;font-weight:700;letter-spacing:-.5px;line-height:1.2}
+.hd-title{font-size:22px;font-weight:700;letter-spacing:-.5px;line-height:1.2}
 .hd-phone{font-size:13px;color:rgba(255,255,255,.45);font-weight:400}
 
 /* ════ 搜索栏 ════ */
@@ -64,16 +67,16 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'PingFang S
 .btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .cat-btn{
   background:var(--card);border:none;border-radius:var(--radius);
-  padding:18px 16px 16px;text-align:left;cursor:pointer;
+  padding:16px;text-align:left;cursor:pointer;
   display:flex;flex-direction:column;gap:0;
-  box-shadow:var(--shadow);transition:transform .12s,box-shadow .12s;
-  overflow:hidden;position:relative
+  box-shadow:var(--shadow);transition:transform .12s,box-shadow .12s
 }
 .cat-btn:active{transform:scale(.96);box-shadow:none}
-.cat-stripe{
-  position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0
+.cat-icon-wrap{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;margin-bottom:11px
 }
-.cat-icon{font-size:26px;margin-bottom:10px;line-height:1}
 .cat-label{font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px}
 .cat-desc{font-size:11px;color:var(--sub);line-height:1.5}
 
@@ -200,26 +203,22 @@ input[type=date].fi{color:var(--text)}
   <div class="ct">
     <div class="btn-grid">
       <button class="cat-btn" onclick="loadList('today')">
-        <div class="cat-stripe" style="background:#F97316"></div>
-        <div class="cat-icon">📞</div>
+        <div class="cat-icon-wrap" style="background:#FF6B35">📞</div>
         <div class="cat-label">今日待联系</div>
         <div class="cat-desc">下次跟进 = 今天</div>
       </button>
       <button class="cat-btn" onclick="loadList('week')">
-        <div class="cat-stripe" style="background:#3B82F6"></div>
-        <div class="cat-icon">📅</div>
+        <div class="cat-icon-wrap" style="background:#3B82F6">📅</div>
         <div class="cat-label">本周待联系</div>
         <div class="cat-desc">下次跟进在本周</div>
       </button>
       <button class="cat-btn" onclick="loadList('enrolled')">
-        <div class="cat-stripe" style="background:#10B981"></div>
-        <div class="cat-icon">✅</div>
+        <div class="cat-icon-wrap" style="background:#10B981">✅</div>
         <div class="cat-label">已报名客户</div>
         <div class="cat-desc">意向 = 已报名</div>
       </button>
       <button class="cat-btn" onclick="loadList('month')">
-        <div class="cat-stripe" style="background:#8B5CF6"></div>
-        <div class="cat-icon">📋</div>
+        <div class="cat-icon-wrap" style="background:#8B5CF6">📋</div>
         <div class="cat-label">本月分配</div>
         <div class="cat-desc">分配时间在本月</div>
       </button>
@@ -230,7 +229,7 @@ input[type=date].fi{color:var(--text)}
 <!-- ═══ 列表页 ═══ -->
 <div id="s-list" class="screen">
   <div class="hd">
-    <button class="hd-back" onclick="goHome()">← 返回</button>
+    <button class="hd-back" onclick="goHome()">返回</button>
     <div class="hd-row">
       <div id="l-title" class="hd-title">—</div>
       <div id="l-sub" class="hd-phone">加载中…</div>
@@ -242,7 +241,7 @@ input[type=date].fi{color:var(--text)}
 <!-- ═══ 详情页 ═══ -->
 <div id="s-detail" class="screen">
   <div class="hd">
-    <button class="hd-back" onclick="goList()">← 返回列表</button>
+    <button class="hd-back" onclick="goList()">返回列表</button>
     <div class="hd-row">
       <div id="d-name" class="hd-title">—</div>
       <div id="d-phone" class="hd-phone">—</div>
