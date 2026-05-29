@@ -445,11 +445,11 @@ input[type=date].fi{color:var(--text)}
     <div class="card">
       <div class="cl">客群</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 13px 14px">
-        <button class="ow-btn" data-v="小学生" onclick="setGroup('小学生')" style="background:#ECFCCB;color:#365314;border-color:#D9F99D">小学生</button>
-        <button class="ow-btn" data-v="初中生" onclick="setGroup('初中生')" style="background:#DCFCE7;color:#14532D;border-color:#BBF7D0">初中生</button>
-        <button class="ow-btn" data-v="高中生" onclick="setGroup('高中生')" style="background:#FEF9C3;color:#78350F;border-color:#FDE68A">高中生</button>
-        <button class="ow-btn" data-v="大学生" onclick="setGroup('大学生')" style="background:#DBEAFE;color:#1E3A8A;border-color:#BFDBFE">大学生</button>
-        <button class="ow-btn" data-v="成人"   onclick="setGroup('成人')"   style="background:#EDE9FE;color:#4C1D95;border-color:#DDD6FE">成人</button>
+        <button class="ow-btn" data-v="小学生" onclick="setGroup('小学生')">小学生</button>
+        <button class="ow-btn" data-v="初中生" onclick="setGroup('初中生')">初中生</button>
+        <button class="ow-btn" data-v="高中生" onclick="setGroup('高中生')">高中生</button>
+        <button class="ow-btn" data-v="大学生" onclick="setGroup('大学生')">大学生</button>
+        <button class="ow-btn" data-v="成人"   onclick="setGroup('成人')">成人</button>
       </div>
     </div>
 
@@ -731,6 +731,10 @@ function renderList() {
     const dateMs=curCat==='month'?f['分配时间']:(f['下次跟进日期']||f['分配时间']);
     const dateTxt=dateMs?fmtDate(dateMs):'';
     const badgeStyle = intent==='已报名' ? 'background:#FEF9C3;color:#78350F' : `background:${iColor(intent)}`;
+    const group = rv(f['客群'])||'';
+    const groupPalette = {'小学生':{bg:'#ECFCCB',c:'#365314'},'初中生':{bg:'#DCFCE7',c:'#14532D'},'高中生':{bg:'#FEF9C3',c:'#78350F'},'大学生':{bg:'#DBEAFE',c:'#1E3A8A'},'成人':{bg:'#EDE9FE',c:'#4C1D95'}};
+    const gp = groupPalette[group];
+    const groupTag = gp ? `<span style="background:${gp.bg};color:${gp.c};font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;white-space:nowrap">${esc(group)}</span>` : '';
     const badge=intent?`<span class="rb" style="${badgeStyle}">${esc(intent)}</span>`:'';
     const rawPhone=rv(f['号码/微信'])||'';
     const phoneNum=rawPhone.replace(/\s/g,'');
@@ -739,7 +743,9 @@ function renderList() {
       :'';
     return `<div class="ri" onclick="openRecord(${idx})">
       <div class="ri-left">
-        <div class="rn">${esc(name)}</div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px">
+          <span class="rn" style="margin-bottom:0">${esc(name)}</span>${groupTag}
+        </div>
         <div class="rp">${esc(phone)}</div>
         ${dateTxt?`<div class="ri-meta">${esc(dateTxt)}</div>`:''}
       </div>
@@ -788,9 +794,25 @@ function renderYN(){
   document.getElementById('yn-no').className='yn-btn'+(curYN==='否'?' sel-no':'');
 }
 function setOwner(v){curOwner=(curOwner===v)?'':v;renderOwner();}
-function renderOwner(){document.querySelectorAll('.ow-btn[data-v]').forEach(b=>{if(b.onclick?.toString().includes('setOwner'))b.classList.toggle('sel',b.dataset.v===curOwner)});}
+function renderOwner(){
+  const sel={'是':{bg:'#ECFDF5',bd:'#059669',c:'#059669'},'否':{bg:'#FEF2F2',bd:'#DC2626',c:'#DC2626'},'曾哥':{bg:'#EFF6FF',bd:'#2563EB',c:'#2563EB'},'他人':{bg:'#F5F3FF',bd:'#7C3AED',c:'#7C3AED'}};
+  document.querySelectorAll('.ow-btn[data-v]').forEach(b=>{
+    if(!sel[b.dataset.v]||!b.onclick?.toString().includes('setOwner')) return;
+    if(b.dataset.v===curOwner){
+      const s=sel[b.dataset.v]; b.style.background=s.bg; b.style.borderColor=s.bd; b.style.color=s.c; b.style.borderWidth='2px';
+    } else { b.style.background=''; b.style.borderColor=''; b.style.color=''; b.style.borderWidth=''; }
+  });
+}
 function setGroup(v){curGroup=(curGroup===v)?'':v;renderGroup();}
-function renderGroup(){document.querySelectorAll('.ow-btn[data-v]').forEach(b=>{if(b.onclick?.toString().includes('setGroup'))b.classList.toggle('sel',b.dataset.v===curGroup);});}
+function renderGroup(){
+  const gp={'小学生':{bg:'#ECFCCB',bd:'#D9F99D',c:'#365314'},'初中生':{bg:'#DCFCE7',bd:'#BBF7D0',c:'#14532D'},'高中生':{bg:'#FEF9C3',bd:'#FDE68A',c:'#78350F'},'大学生':{bg:'#DBEAFE',bd:'#BFDBFE',c:'#1E3A8A'},'成人':{bg:'#EDE9FE',bd:'#DDD6FE',c:'#4C1D95'}};
+  document.querySelectorAll('.ow-btn[data-v]').forEach(b=>{
+    if(!gp[b.dataset.v]||!b.onclick?.toString().includes('setGroup')) return;
+    if(b.dataset.v===curGroup){
+      const s=gp[b.dataset.v]; b.style.background=s.bg; b.style.borderColor=s.bd; b.style.color=s.c; b.style.borderWidth='2px';
+    } else { b.style.background=''; b.style.borderColor=''; b.style.color=''; b.style.borderWidth=''; }
+  });
+}
 
 async function doSave(){
   if(!cur)return;
