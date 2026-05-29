@@ -722,6 +722,8 @@ async function loadList(cat) {
 
 function renderList() {
   const el=document.getElementById('list-content');
+  const sub=document.getElementById('l-sub');
+  if(sub) sub.textContent='共 '+listStore.length+' 条';
   if(!listStore.length){el.innerHTML='<div class="empty-state"><div class="ei">😌</div>暂无数据</div>';return;}
   el.innerHTML=listStore.map((item,idx)=>{
     const f=item.fields;
@@ -1258,6 +1260,7 @@ const STUDENT_CAT_NAMES = {
 async function doStudentSearch(){
   const q = document.getElementById('sq').value.trim();
   if(!q) return;
+  curCat = 'student_search';
   document.getElementById('ml-title').textContent = '搜索结果';
   document.getElementById('ml-sub').textContent = '「'+q+'」';
   document.getElementById('maintain-list-content').innerHTML = '<div class="loading">搜索中…</div>';
@@ -1272,6 +1275,7 @@ async function doStudentSearch(){
 }
 
 async function loadStudentList(action){
+  curCat = action;
   document.getElementById('ml-title').textContent = STUDENT_CAT_NAMES[action] || action;
   document.getElementById('ml-sub').textContent = '加载中…';
   document.getElementById('maintain-list-content').innerHTML = '<div class="loading">加载中…</div>';
@@ -1294,6 +1298,8 @@ async function loadStudentList(action){
 
 function renderStudentList(){
   const el = document.getElementById('maintain-list-content');
+  const sub = document.getElementById('ml-sub');
+  if(sub) sub.textContent = '共 '+studentStore.length+' 条';
   if(!studentStore.length){ el.innerHTML='<div class="empty-state"><div class="ei">😌</div>暂无数据</div>'; return; }
   el.innerHTML = studentStore.map((item,idx)=>{
     const f = item.fields;
@@ -1459,6 +1465,7 @@ async function doMaintainFilter(){
   if(signFrom) conditions.push({field_name:'签约日期', operator:'>=', value:[new Date(signFrom).getTime()]});
   if(signTo)   conditions.push({field_name:'签约日期', operator:'<=', value:[new Date(signTo+'T23:59:59').getTime()]});
 
+  curCat = 'student_custom';
   document.getElementById('ml-title').textContent = '自定义筛选';
   document.getElementById('ml-sub').textContent = '加载中…';
   document.getElementById('maintain-list-content').innerHTML = '<div class="loading">加载中…</div>';
