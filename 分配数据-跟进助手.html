@@ -910,7 +910,10 @@ async function doSave(){
     if(curIntent)fields['意向']=curIntent;
     const info=document.getElementById('f-info').value.trim();if(info)fields['具体信息']=info;
     const call=document.getElementById('f-call').value.trim();if(call)fields['最新通话记录']=call;
-    const dv=document.getElementById('f-date').value; fields['下次跟进日期']=dv?new Date(dv+'T15:59:00.000Z').getTime():null;
+    const dv=document.getElementById('f-date').value;
+    const origDate=cur.fields['下次跟进日期'];
+    if(dv) fields['下次跟进日期']=new Date(dv+'T15:59:00.000Z').getTime();
+    else if(origDate) fields['下次跟进日期']=null;
     const pu=document.getElementById('f-purpose').value.trim();if(pu)fields['下次跟进目的']=pu;
     const rd=document.getElementById('f-remind-date').value;if(rd)fields['特殊提醒时间']=new Date(rd+'T15:59:00.000Z').getTime();
     const rn=document.getElementById('f-remind-note').value.trim();if(rn)fields['特殊提醒事项']=rn;
@@ -1403,7 +1406,9 @@ async function doStudentSave(){
     if(arranged) fields['已排课程'] = arranged;
     if(curStudySign) fields['留学是否签约'] = curStudySign;
     const remindDate = document.getElementById('mf-remind-date').value;
+    const origRemind = curStudent.fields['提醒时间'];
     if(remindDate) fields['提醒时间'] = new Date(remindDate+'T15:59:00.000Z').getTime();
+    else if(origRemind) fields['提醒时间'] = null;
     const remindNote = document.getElementById('mf-remind-note').value.trim();
     if(remindNote) fields['提醒备注'] = remindNote;
     const remark = document.getElementById('mf-remark').value.trim();
