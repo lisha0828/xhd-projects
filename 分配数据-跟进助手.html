@@ -861,6 +861,8 @@ function checkAndRemove(savedFields, cat, store, record, goBackFn) {
   if(shouldRemove){
     const idx = store.indexOf(record);
     if(idx>-1) store.splice(idx,1);
+    if(store === listStore) renderList();
+    else renderStudentList();
     toast('✅ 已保存，已从列表移除');
     setTimeout(goBackFn, 900);
   } else {
