@@ -842,27 +842,54 @@ function checkAndRemove(savedFields, cat, store, record, goBackFn) {
   let shouldRemove = false;
   const f = savedFields;
 
-  if(cat==='today'         && '下次跟进日期' in f) shouldRemove = !isToday(f['下次跟进日期']);
-  else if(cat==='week'     && '下次跟进日期' in f) shouldRemove = !isWeek(f['下次跟进日期']);
-  else if(cat==='month'    && '分配时间'     in f) shouldRemove = !isMonth(f['分配时间']);
-  else if(cat==='today_assigned' && '分配时间' in f) shouldRemove = !isToday(f['分配时间']);
+  if(cat==='today'         && '下次跟进日期' in f) shouldRemove = !f['下次跟进日期'] || !isToday(f['下次跟进日期']);
+  else if(cat==='week'     && '下次跟进日期' in f) shouldRemove = !f['下次跟进日期'] || !isWeek(f['下次跟进日期']);
+  else if(cat==='month'    && '分配时间'     in f) shouldRemove = !f['分配时间']     || !isMonth(f['分配时间']);
+  else if(cat==='today_assigned' && '分配时间' in f) shouldRemove = !f['分配时间']   || !isToday(f['分配时间']);
   else if(cat==='enrolled' && '意向' in f) shouldRemove = f['意向']!=='已报名';
   else if(cat==='strong_intent'){
     if('意向' in f) shouldRemove = f['意向']!=='A'&&f['意向']!=='B';
-    else if('下次跟进日期' in f) shouldRemove = !isWeek(f['下次跟进日期']);
+    else if('下次跟进日期' in f) shouldRemove = !f['下次跟进日期'] || !isWeek(f['下次跟进日期']);
   }
   // 织网
-  else if(cat==='student_today_remind'   && '提醒时间' in f) shouldRemove = !isToday(f['提醒时间']);
-  else if(cat==='student_week_remind'    && '提醒时间' in f) shouldRemove = !isWeek(f['提醒时间']);
-  else if(cat==='student_month_remind'   && '提醒时间' in f) shouldRemove = !isMonth(f['提醒时间']);
-  else if(cat==='student_today_contract' && '签约日期' in f) shouldRemove = !isToday(f['签约日期']);
-  else if(cat==='student_month_contract' && '签约日期' in f) shouldRemove = !isMonth(f['签约日期']);
+  else if(cat==='student_today_remind'   && '提醒时间' in f) shouldRemove = !f['提醒时间'] || !isToday(f['提醒时间']);
+  else if(cat==='student_week_remind'    && '提醒时间' in f) shouldRemove = !f['提醒时间'] || !isWeek(f['提醒时间']);
+  else if(cat==='student_month_remind'   && '提醒时间' in f) shouldRemove = !f['提醒时间'] || !isMonth(f['提醒时间']);
+  else if(cat==='student_today_contract' && '签约日期' in f) shouldRemove = !f['签约日期'] || !isToday(f['签约日期']);
+  else if(cat==='student_month_contract' && '签约日期' in f) shouldRemove = !f['签约日期'] || !isMonth(f['签约日期']);
 
   if(shouldRemove){
     const idx = store.indexOf(record);
     if(idx>-1) store.splice(idx,1);
     if(store === listStore) renderList();
     else renderStudentList();
+
+    // 更新首页按钮计数
+    const cntMap = {
+      'today':'cnt-today','week':'cnt-week','enrolled':'cnt-enrolled',
+      'month':'cnt-month','today_assigned':'cnt-today-assigned','strong_intent':'cnt-strong',
+      'student_today_remind':'scnt-today','student_week_remind':'scnt-week',
+      'student_month_remind':'scnt-month-remind',
+      'student_today_contract':'scnt-today-contract','student_month_contract':'scnt-month-contract',
+    };
+    const cntEl = document.getElementById(cntMap[cat]);
+    if(cntEl){
+      const txt = cntEl.textContent;
+      const numMatch = txt.match(/\d+/);
+      if(numMatch){
+        const n = Math.max(0, parseInt(numMatch[0])-1);
+        // 金额类按钮格式不同，重新拉取
+        if(cat==='student_today_contract'||cat==='student_month_contract'){
+          proxyCall(cat,{sumField:'金额'}).then(data=>{
+            const sum=data.data?.sum||0, cnt=data.data?.total||0;
+            cntEl.textContent = sum>0?`¥${sum.toLocaleString('zh-CN')} · ${cnt}单`:`${cnt} 单`;
+          }).catch(()=>{});
+        } else {
+          cntEl.textContent = n + ' 条';
+        }
+      }
+    }
+
     toast('✅ 已保存，已从列表移除');
     setTimeout(goBackFn, 900);
   } else {
@@ -881,7 +908,7 @@ async function doSave(){
     if(curIntent)fields['意向']=curIntent;
     const info=document.getElementById('f-info').value.trim();if(info)fields['具体信息']=info;
     const call=document.getElementById('f-call').value.trim();if(call)fields['最新通话记录']=call;
-    const dv=document.getElementById('f-date').value;if(dv)fields['下次跟进日期']=new Date(dv+'T15:59:00.000Z').getTime();
+    const dv=document.getElementById('f-date').value; fields['下次跟进日期']=dv?new Date(dv+'T15:59:00.000Z').getTime():null;
     const pu=document.getElementById('f-purpose').value.trim();if(pu)fields['下次跟进目的']=pu;
     const rd=document.getElementById('f-remind-date').value;if(rd)fields['特殊提醒时间']=new Date(rd+'T15:59:00.000Z').getTime();
     const rn=document.getElementById('f-remind-note').value.trim();if(rn)fields['特殊提醒事项']=rn;
