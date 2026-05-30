@@ -1432,34 +1432,7 @@ async function loadStudentList(action){
       document.getElementById('maintain-list-content').innerHTML = '<div class="empty-state"><div class="ei">⚠️</div>飞书错误 '+data.code+'：'+esc(data.msg||'')+'</div>';
       return;
     }
-    let items = data.data?.items || [];
-    if(!fetchAll){
-      items = items.filter(item=>{
-        const f = item.fields;
-        // 合同类型 OR
-        const contracts = filterMulti['合同类型']||new Set();
-        if(contracts.size>0){
-          const raw = f['合同类型'];
-          const fv = Array.isArray(raw)?raw.map(r=>typeof r==='object'?r.value||r.text||String(r):String(r)):[String(raw||'')];
-          if(![...contracts].some(v=>fv.some(r=>r.includes(v)))) return false;
-        }
-        // 留学是否签约 OR
-        const signs = filterMulti['留学是否签约']||new Set();
-        if(signs.size>0){
-          const raw = f['留学是否签约'];
-          const fv = Array.isArray(raw)?raw.map(r=>typeof r==='object'?r.value||r.text||String(r):String(r)):[String(raw||'')];
-          if(![...signs].some(v=>fv.some(r=>r.includes(v)))) return false;
-        }
-        // 日期过滤
-        for(const {field,op,ts} of dateFilters){
-          const raw=f[field]; if(raw==null) return false;
-          const t=typeof raw==='number'?raw:parseInt(raw);
-          if(op==='>='&&t<ts) return false;
-          if(op==='<='&&t>ts) return false;
-        }
-        return true;
-      });
-    }
+    const items = data.data?.items || [];
     studentStore = items;
     document.getElementById('ml-sub').textContent = '共 '+studentStore.length+' 条';
     renderStudentList();
