@@ -242,14 +242,27 @@ input[type=date].fi{color:var(--text)}
 .empty-state{text-align:center;padding:60px 20px;color:var(--sub);font-size:14px}
 .ei{font-size:44px;margin-bottom:12px}
 .loading{text-align:center;padding:60px 20px;color:var(--hint);font-size:14px}
+/* ════ 骨架屏 ════ */
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.sk{background:linear-gradient(90deg,#E8EDF3 25%,#F5F7FA 50%,#E8EDF3 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:6px}
+.sk-card{background:var(--card);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow)}
+.sk-circle{width:32px;height:32px;border-radius:50%;flex-shrink:0}
+
 .toast{
   position:fixed;bottom:110px;left:50%;
-  transform:translateX(-50%) translateY(12px);
+  transform:translateX(-50%) translateY(12px) scale(.95);
   background:rgba(13,27,46,.9);color:#fff;
-  padding:10px 22px;border-radius:24px;font-size:14px;
-  opacity:0;transition:all .2s;pointer-events:none;white-space:nowrap;z-index:999
+  padding:9px 18px 9px 12px;border-radius:24px;font-size:14px;font-weight:500;
+  opacity:0;transition:opacity .22s ease,transform .25s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;white-space:nowrap;z-index:999;
+  display:flex;align-items:center;gap:8px
 }
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+.toast-ck{width:20px;height:20px;flex-shrink:0}
+.toast-ck-circle{stroke:#4ADE80;stroke-width:2;fill:none;stroke-dasharray:57;stroke-dashoffset:57;transition:stroke-dashoffset .4s ease .05s}
+.toast-ck-check{stroke:#4ADE80;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;fill:none;stroke-dasharray:16;stroke-dashoffset:16;transition:stroke-dashoffset .3s ease .35s}
+.toast.show .toast-ck-circle{stroke-dashoffset:0}
+.toast.show .toast-ck-check{stroke-dashoffset:0}
 .fi-select{
   flex:1;height:42px;border:1.5px solid var(--border);border-radius:12px;
   background:#FAFBFD;font-size:14px;color:var(--text);font-family:inherit;
@@ -639,10 +652,45 @@ input[type=date].fi{color:var(--text)}
   </div>
 </div>
 
-<div id="toast" class="toast"></div>
+<div id="toast" class="toast"><svg class="toast-ck" viewBox="0 0 20 20"><circle class="toast-ck-circle" cx="10" cy="10" r="8" transform="rotate(-90 10 10)"/><path class="toast-ck-check" d="M6 10l3 3 5-5"/></svg><span id="toast-msg"></span></div>
 
 <script>
 const PROXY = 'https://feishu-le-proxy-wyyuhgxhep.cn-hangzhou.fcapp.run';
+// ══════════════════════════════════════════════════════
+// 骨架屏
+// ══════════════════════════════════════════════════════
+function skeletonHTML(n){
+  return Array.from({length:n||3},()=>`
+    <div class="sk-card">
+      <div style="flex:1">
+        <div class="sk" style="height:13px;width:${60+Math.random()*40|0}px;margin-bottom:8px"></div>
+        <div class="sk" style="height:11px;width:${90+Math.random()*50|0}px;margin-bottom:6px"></div>
+        <div class="sk" style="height:10px;width:${40+Math.random()*40|0}px"></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <div class="sk sk-circle"></div>
+        <div class="sk sk-circle"></div>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════
+// 数字滚动
+// ══════════════════════════════════════════════════════
+function animateCount(el, target, units, dur){
+  const t0 = Date.now();
+  dur = dur||900;
+  function tick(){
+    const p = Math.min((Date.now()-t0)/dur, 1);
+    const e = 1-Math.pow(1-p,3);
+    const v = Math.round(target*e);
+    el.textContent = v>0 ? ('¥'+v.toLocaleString('zh-CN')+' · '+Math.round(units*e)+'单') : (Math.round(units*e)+' 单');
+    if(p<1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+
 
 async function proxyCall(action, params) {
   const resp = await fetch(PROXY, {
@@ -688,7 +736,7 @@ async function doSearch() {
   curCat='search';
   document.getElementById('l-title').textContent='搜索结果';
   document.getElementById('l-sub').textContent='「'+q+'」';
-  document.getElementById('list-content').innerHTML='<div class="loading">搜索中…</div>';
+  document.getElementById('list-content').innerHTML=skeletonHTML(3);
   showScreen('s-list');
   try {
     const data=await proxyCall('search',{q});
@@ -703,7 +751,7 @@ async function loadList(cat) {
   curCat=cat;
   document.getElementById('l-title').textContent=CAT_NAMES[cat]||cat;
   document.getElementById('l-sub').textContent='加载中…';
-  document.getElementById('list-content').innerHTML='<div class="loading">加载中…</div>';
+  document.getElementById('list-content').innerHTML=skeletonHTML(4);
   showScreen('s-list');
   try {
     const data=await proxyCall(cat);
@@ -889,7 +937,7 @@ function checkAndRemove(savedFields, cat, store, record, goBackFn) {
         if(cat==='student_today_contract'||cat==='student_month_contract'){
           proxyCall(cat,{sumField:'金额'}).then(data=>{
             const sum=data.data?.sum||0, cnt=data.data?.total||0;
-            cntEl.textContent = sum>0?`¥${sum.toLocaleString('zh-CN')} · ${cnt}单`:`${cnt} 单`;
+            animateCount(cntEl, sum, cnt);
           }).catch(()=>{});
         } else {
           cntEl.textContent = n + ' 条';
@@ -957,7 +1005,22 @@ window.addEventListener('popstate', e=>{
 });
 
 let _tt;
-function toast(msg){const e=document.getElementById('toast');e.textContent=msg;e.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>e.classList.remove('show'),2800);}
+function toast(msg){
+  const e=document.getElementById('toast');
+  const m=document.getElementById('toast-msg');
+  const isSuccess = msg.startsWith('✅');
+  // 重置动画
+  e.classList.remove('show');
+  void e.offsetWidth;
+  m.textContent = isSuccess ? msg.replace('✅ ','') : msg;
+  // 成功时显示对勾图标，其他情况隐藏
+  e.querySelector('.toast-ck').style.display = isSuccess ? 'block' : 'none';
+  clearTimeout(_tt);
+  setTimeout(()=>{
+    e.classList.add('show');
+    _tt=setTimeout(()=>e.classList.remove('show'),2800);
+  },20);
+}
 
 document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
 
@@ -1238,7 +1301,7 @@ async function loadStudentCounts(){
       if (c.type === 'sum') {
         const sum = data.data?.sum || 0;
         const cnt = data.data?.total || 0;
-        el.textContent = sum > 0 ? `¥${sum.toLocaleString('zh-CN')} · ${cnt}单` : `${cnt} 单`;
+        animateCount(el, sum, cnt);
       } else {
         const n = data.data?.total ?? data.data?.items?.length ?? '?';
         el.textContent = n + ' 条';
@@ -1271,7 +1334,7 @@ async function doStudentSearch(){
   curCat = 'student_search';
   document.getElementById('ml-title').textContent = '搜索结果';
   document.getElementById('ml-sub').textContent = '「'+q+'」';
-  document.getElementById('maintain-list-content').innerHTML = '<div class="loading">搜索中…</div>';
+  document.getElementById('maintain-list-content').innerHTML = skeletonHTML(3);
   showScreen('s-maintain-list');
   try {
     const data = await proxyCall('student_search', {q});
@@ -1286,7 +1349,7 @@ async function loadStudentList(action){
   curCat = action;
   document.getElementById('ml-title').textContent = STUDENT_CAT_NAMES[action] || action;
   document.getElementById('ml-sub').textContent = '加载中…';
-  document.getElementById('maintain-list-content').innerHTML = '<div class="loading">加载中…</div>';
+  document.getElementById('maintain-list-content').innerHTML = skeletonHTML(4);
   showScreen('s-maintain-list');
   try {
     const data = await proxyCall(action);
@@ -1435,7 +1498,7 @@ async function doStudentSave(){
         proxyCall(curCat,{sumField:"金额"}).then(d=>{
           const elId=curCat==="student_today_contract"?"scnt-today-contract":"scnt-month-contract";
           const el=document.getElementById(elId);
-          if(el){const sum=d.data?.sum||0,cnt=d.data?.total||0;el.textContent=sum>0?`¥${sum.toLocaleString("zh-CN")} · ${cnt}单`:`${cnt} 单`;}
+          if(el){const sum=d.data?.sum||0,cnt=d.data?.total||0;animateCount(el,sum,cnt);}
         }).catch(()=>{});
       }
       checkAndRemove(fields,curCat,studentStore,curStudent,()=>showScreen("s-maintain-list"));
@@ -1497,7 +1560,7 @@ async function doMaintainFilter(){
   curCat = 'student_custom';
   document.getElementById('ml-title').textContent = '自定义筛选';
   document.getElementById('ml-sub').textContent = '加载中…';
-  document.getElementById('maintain-list-content').innerHTML = '<div class="loading">加载中…</div>';
+  document.getElementById('maintain-list-content').innerHTML = skeletonHTML(4);
   showScreen('s-maintain-list');
 
   try {
