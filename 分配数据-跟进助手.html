@@ -1306,23 +1306,28 @@ function renderStudentList(){
   const sub = document.getElementById('ml-sub');
   if(sub) sub.textContent = '共 '+studentStore.length+' 条';
   if(!studentStore.length){ el.innerHTML='<div class="empty-state"><div class="ei">😌</div>暂无数据</div>'; return; }
+  const isContractCat = (curCat === 'student_today_contract' || curCat === 'student_month_contract');
   el.innerHTML = studentStore.map((item,idx)=>{
     const f = item.fields;
     const name    = rv(f['学员姓名']) || '（无姓名）';
     const phone   = rv(f['乙方电话']) || '—';
     const ctype   = rv(f['合同类型']) || '';
     const remind  = fmtDate(f['提醒时间']);
+    const amt     = f['金额'] != null ? '¥ ' + Number(f['金额']).toLocaleString('zh-CN') : '';
     const ctypeColors = {'一对一':'#2563EB','班课':'#D97706','留学':'#7C3AED'};
     const badge = ctype ? `<span class="rb" style="background:${ctypeColors[ctype]||'#94A3B8'}">${esc(ctype)}</span>` : '';
     const rawPhone = rv(f['乙方电话'])||'';
     const phoneNum = rawPhone.replace(/\s/g,'');
     const callBtn = phoneNum&&/^\d{7,}$/.test(phoneNum)
       ? `<a class="call-btn" href="tel:${phoneNum}" onclick="event.stopPropagation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></a>` : '';
+    const metaLine = isContractCat
+      ? (amt ? `<div class="ri-meta" style="color:#16A34A;font-weight:600">${amt}</div>` : '')
+      : (remind ? `<div class="ri-meta">提醒 ${esc(remind)}</div>` : '');
     return `<div class="ri" onclick="openStudentRecord(${idx})">
       <div class="ri-left">
         <div class="rn">${esc(name)}</div>
         <div class="rp">${esc(phone)}</div>
-        ${remind ? '<div class="ri-meta">提醒 '+esc(remind)+'</div>' : ''}
+        ${metaLine}
       </div>
       <div class="ri-right">${callBtn}${badge}</div>
     </div>`;
