@@ -123,6 +123,19 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,'PingFang S
 .cat-label{font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px}
 .cat-desc{font-size:11px;color:var(--sub);line-height:1.5;letter-spacing:.2px}
 
+
+/* ════ 跟进日志时间流 ════ */
+.tl-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;user-select:none}
+.tl-item{display:flex;gap:10px;padding-bottom:14px}
+.tl-item:last-child{padding-bottom:0}
+.tl-dot-col{display:flex;flex-direction:column;align-items:center;padding-top:4px;flex-shrink:0}
+.tl-dot{width:9px;height:9px;border-radius:50%;background:#7C3AED;flex-shrink:0}
+.tl-dot.old{background:var(--hint)}
+.tl-vline{width:1.5px;background:var(--border);flex:1;margin-top:5px;min-height:16px}
+.tl-item:last-child .tl-vline{display:none}
+.tl-time{font-size:11px;color:#64748B;margin-bottom:3px;font-weight:500}
+.tl-text{font-size:13px;color:var(--text);line-height:1.6}
+
 /* ════ 列表项 ════ */
 .ri{
   background:var(--card);border-radius:var(--radius);
@@ -524,8 +537,33 @@ input[type=date].fi{color:var(--text)}
     <!-- 最新通话 -->
     <div class="card">
       <div class="fr" style="border-top:none">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><div class="fl" style="margin-bottom:0">最新通话记录</div><button onclick="var e=document.getElementById('f-call');e.value='';e.focus()" style="background:none;border:none;color:var(--hint);font-size:20px;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0">×</button></div>
-        <textarea id="f-call" class="fi fita" placeholder="记录本次通话内容…"></textarea>
+        <div class="fl" style="margin-bottom:8px">最新通话记录</div>
+        <div id="f-call-ro" style="font-size:14px;color:#334155;line-height:1.7;white-space:pre-wrap;word-break:break-word;min-height:36px;padding:2px 0"></div>
+      </div>
+    </div>
+
+    <!-- 跟进日志时间流 -->
+    <div class="card" id="tl-card">
+      <div class="tl-header" onclick="toggleTL()">
+        <div style="display:flex;align-items:center;gap:8px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span style="font-size:13px;color:var(--sub);font-weight:500">跟进日志</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span id="tl-badge" style="font-size:11px;color:#7C3AED;background:#F5F3FF;padding:2px 8px;border-radius:20px;border:1px solid #DDD6FE">0 条</span>
+          <span id="tl-chev" style="color:var(--hint);font-size:16px;transition:transform .2s;display:inline-block">›</span>
+        </div>
+      </div>
+      <div id="tl-body" style="display:none;border-top:1px solid var(--border);padding:14px 16px 16px">
+        <!-- 输入行 -->
+        <div style="display:flex;gap:8px;margin-bottom:14px;background:#F5F3FF;border:1.5px solid #DDD6FE;border-radius:14px;padding:10px 12px">
+          <textarea id="tl-inp" class="fi fita" rows="2" placeholder="记录跟进内容…" style="flex:1;resize:none;border:none;background:transparent;padding:0" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+          <button onclick="sendLog()" style="width:36px;height:36px;border-radius:50%;background:var(--ink);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;align-self:flex-end">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+          </button>
+        </div>
+        <!-- 时间流列表 -->
+        <div id="tl-list"></div>
       </div>
     </div>
 
@@ -703,6 +741,93 @@ async function loadMotto(){
       el.style.opacity = '1';
     }, 300);
   } catch(e) {}
+}
+
+
+// ══════════════════════════════════════════════════════
+// 跟进日志时间流
+// ══════════════════════════════════════════════════════
+let tlOpen = false;
+
+function toggleTL(){
+  tlOpen = !tlOpen;
+  document.getElementById('tl-body').style.display = tlOpen ? 'block' : 'none';
+  document.getElementById('tl-chev').style.transform = tlOpen ? 'rotate(90deg)' : '';
+}
+
+function renderTL(logStr){
+  const list = document.getElementById('tl-list');
+  if(!list) return;
+  if(!logStr || !logStr.trim()){
+    list.innerHTML = '<div style="font-size:13px;color:var(--hint);text-align:center;padding:8px 0">暂无记录</div>';
+    document.getElementById('tl-badge').textContent = '0 条';
+    return;
+  }
+  const lines = logStr.split('\n').filter(l=>l.trim());
+  // 默认只显示前3条，展开后显示全部
+  const show = tlOpen ? lines : lines.slice(0,3);
+  list.innerHTML = show.map((line,i)=>{
+    const match = line.match(/^\[(.+?)\] (.+)$/);
+    if(!match) return '';
+    const [,time,text] = match;
+    return `<div class="tl-item">
+      <div class="tl-dot-col"><div class="tl-dot${i>0?' old':''}"></div><div class="tl-vline"></div></div>
+      <div><div class="tl-time">${time}</div><div class="tl-text">${text.replace(/</g,'&lt;')}</div></div>
+    </div>`;
+  }).join('');
+  document.getElementById('tl-badge').textContent = lines.length + ' 条';
+  if(!tlOpen && lines.length > 3){
+    list.innerHTML += `<div style="font-size:12px;color:#7C3AED;text-align:center;padding:8px 0;cursor:pointer" onclick="toggleTL()">查看全部 ${lines.length} 条 ›</div>`;
+  }
+}
+
+async function sendLog(){
+  const inp = document.getElementById('tl-inp');
+  const val = inp.value.trim();
+  if(!val) return;
+  const btn = inp.nextElementSibling;
+  btn.disabled = true;
+
+  const now = new Date();
+  const ts = now.getFullYear()+'/'
+    +(now.getMonth()+1).toString().padStart(2,'0')+'/'
+    +now.getDate().toString().padStart(2,'0')+' '
+    +now.getHours().toString().padStart(2,'0')+':'
+    +now.getMinutes().toString().padStart(2,'0');
+
+  // 读取现有日志
+  const oldLog = cur?.fields?.['跟进日志'] || '';
+  const newLog = `[${ts}] ${val}` + (oldLog ? '\n' + oldLog : '');
+
+  try {
+    const data = await proxyCall('update', {
+      recordId: cur.record_id,
+      fields: {
+        '最新通话记录': val,
+        '跟进日志': newLog
+      }
+    });
+    if(data.code === 0){
+      // 更新本地数据
+      if(cur.fields) {
+        cur.fields['最新通话记录'] = val;
+        cur.fields['跟进日志'] = newLog;
+      }
+      // 同步更新通话记录只读展示
+      const callEl = document.getElementById('f-call-ro');
+      if(callEl) callEl.textContent = val;
+      // 渲染时间流
+      renderTL(newLog);
+      inp.value = '';
+      inp.style.height = 'auto';
+      toast('✅ 已记录并同步');
+    } else {
+      toast('同步失败：' + (data.msg||''));
+    }
+  } catch(e){
+    toast('错误：' + e.message);
+  }
+  btn.disabled = false;
 }
 
 // ══════════════════════════════════════════════════════
@@ -884,7 +1009,8 @@ function openRecord(idx){
   document.getElementById('f-name').value=name;
   document.getElementById('f-phone').value=phone;
   curIntent=rv(f['意向'])||''; renderIntent();
-  document.getElementById('f-call').value=rv(f['最新通话记录'])||'';
+  document.getElementById('f-call-ro').textContent=rv(f['最新通话记录'])||'—';
+  tlOpen=true;document.getElementById('tl-body').style.display='block';document.getElementById('tl-chev').style.transform='rotate(90deg)';renderTL(rv(f['跟进日志'])||'');
   document.getElementById('f-date').value=msToDateInput(f['下次跟进日期']);
   document.getElementById('f-purpose').value=rv(f['下次跟进目的'])||'';
   document.getElementById('f-remind-date').value=msToDateInput(f['特殊提醒时间']);
@@ -1021,7 +1147,6 @@ async function doSave(){
     const phone=document.getElementById('f-phone').value.trim();if(phone)fields['号码/微信']=phone;
     if(curIntent)fields['意向']=curIntent;
     const info=document.getElementById('f-info').value.trim();if(info)fields['具体信息']=info;
-    const call=document.getElementById('f-call').value.trim();if(call)fields['最新通话记录']=call;
     const dv=document.getElementById('f-date').value;
     const origDate=cur.fields['下次跟进日期'];
     if(dv) fields['下次跟进日期']=new Date(dv+'T15:59:00.000Z').getTime();
