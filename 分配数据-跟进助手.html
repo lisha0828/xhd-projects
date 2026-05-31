@@ -763,21 +763,31 @@ function renderTL(logStr){
     document.getElementById('tl-badge').textContent = '0 条';
     return;
   }
-  const lines = logStr.split('\n').filter(l=>l.trim());
-  // 默认只显示前3条，展开后显示全部
-  const show = tlOpen ? lines : lines.slice(0,3);
-  list.innerHTML = show.map((line,i)=>{
-    const match = line.match(/^\[(.+?)\] (.+)$/);
-    if(!match) return '';
-    const [,time,text] = match;
+  // 按 [时间戳] 标记分割，兼容内容本身含换行的情况
+  const entries = [];
+  const re = /\[([^\]]+)\]\s*([\s\S]*?)(?=\n?\[|$)/g;
+  let m;
+  while((m = re.exec(logStr)) !== null){
+    const time = m[1].trim();
+    const text = m[2].trim();
+    if(time && text) entries.push({time, text});
+  }
+  // 若正则无匹配（格式异常），回退到按行解析
+  const items = entries.length ? entries : logStr.split('\n').filter(l=>l.trim()).map(line=>{
+    const lm = line.match(/^\[(.+?)\] (.+)$/);
+    return lm ? {time:lm[1], text:lm[2]} : null;
+  }).filter(Boolean);
+
+  document.getElementById('tl-badge').textContent = items.length + ' 条';
+  const show = tlOpen ? items : items.slice(0,3);
+  list.innerHTML = show.map(({time,text},i)=>{
     return `<div class="tl-item">
       <div class="tl-dot-col"><div class="tl-dot${i>0?' old':''}"></div><div class="tl-vline"></div></div>
       <div><div class="tl-time">${time}</div><div class="tl-text">${text.replace(/</g,'&lt;')}</div></div>
     </div>`;
   }).join('');
-  document.getElementById('tl-badge').textContent = lines.length + ' 条';
-  if(!tlOpen && lines.length > 3){
-    list.innerHTML += `<div style="font-size:12px;color:#7C3AED;text-align:center;padding:8px 0;cursor:pointer" onclick="toggleTL()">查看全部 ${lines.length} 条 ›</div>`;
+  if(!tlOpen && items.length > 3){
+    list.innerHTML += `<div style="font-size:12px;color:#7C3AED;text-align:center;padding:8px 0;cursor:pointer" onclick="toggleTL()">查看全部 ${items.length} 条 ›</div>`;
   }
 }
 
@@ -796,7 +806,7 @@ async function sendLog(){
     +now.getMinutes().toString().padStart(2,'0');
 
   // 读取现有日志
-  const oldLog = cur?.fields?.['跟进日志'] || '';
+  const oldLog = rvLog(cur?.fields?.['跟进日志']) || '';
   const newLog = `[${ts}] ${val}` + (oldLog ? '\n' + oldLog : '');
 
   try {
@@ -879,7 +889,33 @@ function rv(v) {
   if (v==null) return '';
   if (typeof v==='string') return v;
   if (typeof v==='number') return String(v);
-  if (Array.isArray(v)) return v.map(i=>i.text||'').join('');
+  if (Array.isArray(v)) return v.map(i=>{
+    if(typeof i==='string') return i;
+    if(typeof i==='object'&&i!==null) return i.text||i.value||String(i);
+    return String(i);
+  }).join('');
+  if (typeof v==='object') return v.text||v.value||'';
+  return String(v);
+}
+
+// 专用：解析飞书多行文本字段（跟进日志），保留段落换行
+function rvLog(v) {
+  if (v==null) return '';
+  if (typeof v==='string') return v;
+  if (typeof v==='number') return String(v);
+  if (Array.isArray(v)) {
+    return v.map(seg => {
+      if (typeof seg === 'string') return seg;
+      if (typeof seg === 'object' && seg !== null) {
+        // 飞书多行文本：每个段落是 {type:"text", text:"..."} 或段落分隔符
+        if (seg.type === 'paragraph' && Array.isArray(seg.elements)) {
+          return seg.elements.map(e => (typeof e==='object'?e.text||'':String(e))).join('') + '\n';
+        }
+        return seg.text || seg.value || '';
+      }
+      return String(seg);
+    }).join('').replace(/\n$/, '');
+  }
   if (typeof v==='object') return v.text||v.value||'';
   return String(v);
 }
@@ -1010,7 +1046,7 @@ function openRecord(idx){
   document.getElementById('f-phone').value=phone;
   curIntent=rv(f['意向'])||''; renderIntent();
   document.getElementById('f-call-ro').textContent=rv(f['最新通话记录'])||'—';
-  tlOpen=true;document.getElementById('tl-body').style.display='block';document.getElementById('tl-chev').style.transform='rotate(90deg)';renderTL(rv(f['跟进日志'])||'');
+  tlOpen=true;document.getElementById('tl-body').style.display='block';document.getElementById('tl-chev').style.transform='rotate(90deg)';renderTL(rvLog(f['跟进日志'])||'');
   document.getElementById('f-date').value=msToDateInput(f['下次跟进日期']);
   document.getElementById('f-purpose').value=rv(f['下次跟进目的'])||'';
   document.getElementById('f-remind-date').value=msToDateInput(f['特殊提醒时间']);
