@@ -1045,7 +1045,7 @@ function openRecord(idx){
   document.getElementById('f-name').value=name;
   document.getElementById('f-phone').value=phone;
   curIntent=rv(f['意向'])||''; renderIntent();
-  document.getElementById('f-call-ro').textContent=rv(f['最新通话记录'])||'—';
+  document.getElementById('f-call-ro').textContent=rvLog(f['最新通话记录'])||'—';
   tlOpen=true;document.getElementById('tl-body').style.display='block';document.getElementById('tl-chev').style.transform='rotate(90deg)';renderTL(rvLog(f['跟进日志'])||'');
   document.getElementById('f-date').value=msToDateInput(f['下次跟进日期']);
   document.getElementById('f-purpose').value=rv(f['下次跟进目的'])||'';
